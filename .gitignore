@@ -1,1 +1,6 @@
+/config/
 /tags
+/travis-guest_api-0.0.1.gem
+
+#temporarily
+/lib/travis/guest-api/helpers/ddtf.rb
