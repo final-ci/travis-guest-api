@@ -1,15 +1,12 @@
 require 'travis/support'
-require 'travis/support/amqp'
-require 'travis/support/exceptions/reporter'
 require 'travis/support/metrics'
 require 'sinatra/base'
 
 require 'travis/guest-api/app/endpoints'
 
-require 'travis/worker'
-require 'travis/worker/reporter'
-require 'travis/worker/utils/serialization'
-
+#require 'travis/worker'
+#require 'travis/worker/reporter'
+#require 'travis/worker/utils/serialization'
 
 module Travis::GuestApi
 
@@ -20,12 +17,12 @@ module Travis::GuestApi
 
     def initialize(job_id, reporter = nil, &block)
       @job_id = job_id
-      @reporter = reporter || Travis::Worker::Reporter.new(
-        'standalone-reporter',
-        Travis::Amqp::Publisher.jobs('builds', unique_channel: true, dont_retry: true),
-        Travis::Amqp::Publisher.jobs('logs', unique_channel: true, dont_retry: true),
-        Travis::Amqp::Publisher.jobs('test_results', unique_channel: true, dont_retry: true)
-      )
+      @reporter = reporter # || Travis::Worker::Reporter.new(
+      #  'standalone-reporter',
+      #  Travis::Amqp::Publisher.jobs('builds', unique_channel: true, dont_retry: true),
+      #  Travis::Amqp::Publisher.jobs('logs', unique_channel: true, dont_retry: true),
+      #  Travis::Amqp::Publisher.jobs('test_results', unique_channel: true, dont_retry: true)
+      #)
       @msg_handler = block
 
       @app = Rack::Builder.app do

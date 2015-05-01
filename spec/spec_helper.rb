@@ -1,7 +1,3 @@
-#FIXME: needs to move Reporter here
-$: << './lib'
-$: << '../travis-worker/lib'
-
 require 'bundler/setup'
 
-ENV['RAILS_ENV'] = ENV['ENV'] = 'test'
+ENV['RAILS_ENV'] = ENV['RACK_ENV'] = ENV['ENV'] = 'test'
