@@ -1,6 +1,7 @@
 /config/
 /tags
 /travis-guest_api-0.0.1.gem
+/.vagrant
 
 #temporarily
 /lib/travis/guest-api/helpers/ddtf.rb

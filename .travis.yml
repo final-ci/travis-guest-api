@@ -1,0 +1,8 @@
+language: ruby
+
+env:
+  - JRUBY_OPTS="--dev -Xcext.enabled=false -Xcompile.invokedynamic=false -J-Xmx1g"
+
+rvm:
+ - "jruby-1.7.16"
+ - "2.2.2"

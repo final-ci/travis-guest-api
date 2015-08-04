@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/final-ci/travis-guest-api.svg?branch=master)](https://travis-ci.org/final-ci/travis-guest-api)
+
 Guest API
 =========
 
@@ -10,6 +12,7 @@ Basics of Architecutre
 
 [Travis-worker](https://github.com/finalci/travis-worker) do the
 following:
+
 1. starts VM
 2. starts GuestAPI server
 3. Forward the local port of the GuestAPI to the VM
