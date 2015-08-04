@@ -3,6 +3,8 @@ language: ruby
 env:
   - JRUBY_OPTS="--dev -Xcext.enabled=false -Xcompile.invokedynamic=false -J-Xmx1g"
 
+cache: bundler
+
 rvm:
- - "jruby-1.7.16"
+ - "jruby-1.7.19"
  - "2.2.2"
