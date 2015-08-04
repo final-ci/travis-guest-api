@@ -1,5 +1,4 @@
 $: << './lib'
-$: << '../travis-worker/lib'
 
 require 'bundler/setup'
 
