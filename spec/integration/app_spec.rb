@@ -42,7 +42,7 @@ module Travis::GuestApi
         expect(response.status).to eq(422)
       end
 
-      it 'responds with 422 when wrong job_id is missing' do
+      it 'responds with 422 on job_id mismatch' do
         response = post '/logs', { job_id: 2 }.to_json, "CONTENT_TYPE" => "application/json"
         expect(response.status).to eq(422)
       end
