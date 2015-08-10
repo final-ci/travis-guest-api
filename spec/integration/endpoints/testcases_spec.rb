@@ -15,46 +15,6 @@ module Travis::GuestApi
     let(:reporter) { double(:reporter) }
     let(:callback) { ->(x) { } }
 
-    describe 'GET /uptime' do
-      it 'returns 204' do
-        response = get '/uptime'
-        expect(response.status).to eq(204)
-      end
-    end
-
-    describe 'POST /logs' do
-      let(:post_data1) { { job_id: 1, message: 'my message1' } }
-      let(:post_data2) { { job_id: 1, message: 'my message2' } }
-      it 'sends data to pusher' do
-
-        expect(reporter).to receive(:send_log).with(1, post_data1[:message])
-        expect(reporter).to receive(:send_log).with(1, post_data2[:message])
-
-        response = post '/logs', post_data1.to_json, "CONTENT_TYPE" => "application/json"
-        expect(response.status).to eq(200)
-
-        response = post '/logs', post_data2.to_json, "CONTENT_TYPE" => "application/json"
-        expect(response.status).to eq(200)
-      end
-
-      it 'responds with 422 when message is missing' do
-        response = post '/logs', { job_id: 1 }.to_json, "CONTENT_TYPE" => "application/json"
-        expect(response.status).to eq(422)
-      end
-
-      it 'responds with 422 on job_id mismatch' do
-        response = post '/logs', { job_id: 2 }.to_json, "CONTENT_TYPE" => "application/json"
-        expect(response.status).to eq(422)
-      end
-    end
-
-    describe 'POST /jobs/:job_id/logs' do
-      it 'responds with 422 when passed job_id is wrong' do
-        response = post '/jobs/2/logs', { job_id: 1 }.to_json, "CONTENT_TYPE" => "application/json"
-        expect(response.status).to eq(422)
-      end
-    end
-
     context 'testcase' do
       let(:testcase) {
         {
@@ -65,7 +25,6 @@ module Travis::GuestApi
         }
       }
       let(:testcase_with_data) { testcase.update('test_data' => { 'any_content' => 'xxx' }, 'duration' => 56) }
-
 
       describe 'POST /testcases' do
         it 'sends data to the pusher' do
@@ -113,15 +72,5 @@ module Travis::GuestApi
         end
       end
     end
-
-    describe 'POST /finished' do
-      it 'call callback with event: finished' do
-        expect(callback).to receive(:call).with(event: 'finished')
-
-        response = post '/finished', {}.to_json, "CONTENT_TYPE" => "application/json"
-        expect(response.status).to eq(200)
-      end
-    end
-
   end
 end

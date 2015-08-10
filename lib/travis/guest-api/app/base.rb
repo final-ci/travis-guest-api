@@ -1,33 +1,55 @@
 require 'travis/guest-api/app'
 require 'sinatra/base'
+require "sinatra/multi_route"
 
-class Travis::GuestApi::App
-  # Superclass for any endpoint and middleware.
-  # Pulls in relevant helpers and extensions.
-  class Base < Sinatra::Base
+module Travis::GuestApi
+  class App
+    class Base < Sinatra::Base
 
-    error JSON::ParserError do
-      status 400
-      "Invalid JSON in request body"
-    end
+      register Sinatra::MultiRoute
 
-    def call(env)
-      super
-    rescue Sinatra::NotFound
-      [404, {'Content-Type' => 'text/plain'}, ['Tell Lukas to fix this!']]
-    end
+      set :prefix, '/'
 
-    configure do
-      disable  :logging
-      enable   :raise_errors
-      disable  :dump_errors
-    end
+      before do
+        env['rack.logger'] = Travis.logger
+        env['rack.errors'] = Travis.logger.instance_variable_get(:@logdev).dev rescue nil
+      end
 
-    configure :development do
-      # We want error pages in development, but only
-      # when we don't have an error handler specified
-      set :show_exceptions, :after_handler
-      enable :dump_errors
+      # / and /uptime does not need job_id
+      before /^(?!\/|\/uptime)$/ do
+        halt 422, { error: 'Job_id is required!' }.to_json unless env['job_id']
+        @job_id = env['job_id']
+      end
+
+      after do
+        content_type :json unless content_type
+      end
+
+      error JSON::ParserError do
+        status 400
+        "Invalid JSON in request body"
+      end
+
+      # Rack protocol
+      def call(env)
+        super
+      rescue Sinatra::NotFound
+        [404, {'Content-Type' => 'text/plain'}, ['Tell Lukas to fix this!']]
+      end
+
+      configure do
+        disable  :logging
+        enable   :raise_errors
+        disable  :dump_errors
+      end
+
+      configure :development do
+        # We want error pages in development, but only
+        # when we don't have an error handler specified
+        set :show_exceptions, :after_handler
+        enable :dump_errors
+      end
+
     end
   end
 end

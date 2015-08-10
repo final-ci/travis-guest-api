@@ -2,8 +2,12 @@ require 'travis/support'
 require 'travis/support/metrics'
 require 'sinatra/base'
 
-require 'travis/guest-api/app/endpoints'
 require 'travis/guest-api/app/middleware/rewrite'
+require 'travis/guest-api/app/endpoints/testcases'
+require 'travis/guest-api/app/endpoints/logs'
+require 'travis/guest-api/app/endpoints/finished'
+require 'travis/guest-api/app/endpoints/home'
+require 'travis/guest-api/app/endpoints/uptime'
 
 #require 'travis/worker'
 #require 'travis/worker/reporter'
@@ -28,7 +32,11 @@ module Travis::GuestApi
       @app = Rack::Builder.app do
         map '/' do
           use Travis::GuestApi::App::Middleware::Rewrite
-          run Travis::GuestApi::App::Endpoints.new
+          use Travis::GuestApi::App::Endpoints::Logs
+          use Travis::GuestApi::App::Endpoints::TestCases
+          use Travis::GuestApi::App::Endpoints::Finished
+          use Travis::GuestApi::App::Endpoints::Uptime
+          run Travis::GuestApi::App::Endpoints::Home.new
         end
       end
     end
