@@ -19,7 +19,7 @@ module Travis::GuestApi
       it 'call callback with event: finished' do
         expect(callback).to receive(:call).with(event: 'finished')
 
-        response = post '/finished', {}.to_json, "CONTENT_TYPE" => "application/json"
+        response = post '/api/v2/finished', {}.to_json, "CONTENT_TYPE" => "application/json"
         expect(response.status).to eq(200)
       end
     end

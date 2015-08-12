@@ -71,6 +71,8 @@ GEM
     puma (2.12.3)
     puma (2.12.3-java)
     rack (1.6.4)
+    rack-parser (0.6.1)
+      rack
     rack-protection (1.5.3)
       rack
     rack-test (0.6.3)
@@ -123,6 +125,7 @@ DEPENDENCIES
   nokogiri
   puma
   rack-contrib!
+  rack-parser
   rspec
   sinatra
   sinatra-contrib

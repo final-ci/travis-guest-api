@@ -1,6 +1,7 @@
 require 'travis/support'
 require 'travis/support/metrics'
 require 'sinatra/base'
+require 'rack/parser'
 
 require 'travis/guest-api/app/middleware/rewrite'
 require 'travis/guest-api/app/endpoints/testcases'
@@ -30,8 +31,9 @@ module Travis::GuestApi
       @msg_handler = block
 
       @app = Rack::Builder.app do
-        map '/' do
-          use Travis::GuestApi::App::Middleware::Rewrite
+        use Rack::Parser, :parsers => { 'application/json' => proc { |data| JSON.parse data } }
+        use Travis::GuestApi::App::Middleware::Rewrite
+        map '/api/v2' do
           use Travis::GuestApi::App::Endpoints::Logs
           use Travis::GuestApi::App::Endpoints::TestCases
           use Travis::GuestApi::App::Endpoints::Finished
