@@ -122,6 +122,7 @@ DEPENDENCIES
   march_hare (~> 2.7.0)
   metriks (= 0.9.9.6)
   metriks-librato_metrics!
+  multi_json (~> 1.0)
   nokogiri
   puma
   rack-contrib!

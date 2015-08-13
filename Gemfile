@@ -11,6 +11,7 @@ gem 'sinatra'
 gem 'sinatra-contrib'
 gem 'rack-contrib',    github: 'rack/rack-contrib'
 gem 'rack-parser', :require => 'rack/parser'
+gem 'multi_json', '~> 1.0'
 
 #gem 'celluloid'
 

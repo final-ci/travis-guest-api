@@ -17,9 +17,9 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
   context "server is run without job_id" do
     let(:job_id) { nil }
     it 'rewrites job_id to environment' do
-      job_id = 42
-      get "/api/v1/jobs/#{job_id}/uptime"
-      expect(last_request.env['job_id']).to eq(job_id)
+      job_id_URL_param = 42
+      get "/api/v1/jobs/#{job_id_URL_param}/uptime"
+      expect(last_request.env['job_id']).to eq(job_id_URL_param)
       expect(last_response.status).to eq 204
     end
   end
@@ -33,11 +33,13 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
   end
 
   describe '/machines/logs/message' do
+    let!(:job_id) { 42 }
     it 'rewrites logs route' do
-      expect(reporter).to receive(:send_log)
+      expected_message = 'test message'
+      expect(reporter).to receive(:send_log).with(job_id, expected_message)
       response = post "/api/v1/machines/logs/message",
-        { messageText: "foo" },
-        'x-MachineId' => 123
+        { messageText: expected_message },
+        'x-MachineId' => job_id
       expect(last_request.form_data?).to be true
       expect(response.status).to eq(200)
     end
