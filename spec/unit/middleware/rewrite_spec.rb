@@ -50,4 +50,11 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
     end
   end
 
+  describe '/machines/networks' do
+    it 'rewrites networks route' do
+      response = post "/api/v1/machines/networks"
+      expect(response.status).to eq(501)
+    end
+  end
+
 end

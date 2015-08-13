@@ -10,6 +10,7 @@ require 'travis/guest-api/app/endpoints/logs'
 require 'travis/guest-api/app/endpoints/finished'
 require 'travis/guest-api/app/endpoints/home'
 require 'travis/guest-api/app/endpoints/uptime'
+require 'travis/guest-api/app/endpoints/networks'
 
 #require 'travis/worker'
 #require 'travis/worker/reporter'
@@ -39,6 +40,7 @@ module Travis::GuestApi
           use Travis::GuestApi::App::Endpoints::TestCases
           use Travis::GuestApi::App::Endpoints::Finished
           use Travis::GuestApi::App::Endpoints::Uptime
+          use Travis::GuestApi::App::Endpoints::Networks
           run Travis::GuestApi::App::Endpoints::Home.new
         end
       end
