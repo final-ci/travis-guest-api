@@ -1,7 +1,6 @@
 require 'spec_helper'
 require 'ostruct'
 
-require 'travis/guest-api/app'
 require 'rack/test'
 
 module Travis::GuestApi
@@ -23,27 +22,31 @@ module Travis::GuestApi
         expect(reporter).to receive(:send_log).with(1, post_data1[:message])
         expect(reporter).to receive(:send_log).with(1, post_data2[:message])
 
-        response = post '/logs', post_data1.to_json, "CONTENT_TYPE" => "application/json"
+        response = post '/api/v2/logs', post_data1.to_json, "CONTENT_TYPE" => "application/json"
         expect(response.status).to eq(200)
 
-        response = post '/logs', post_data2.to_json, "CONTENT_TYPE" => "application/json"
+        response = post '/api/v2/logs', post_data2.to_json, "CONTENT_TYPE" => "application/json"
         expect(response.status).to eq(200)
       end
 
       it 'responds with 422 when message is missing' do
-        response = post '/logs', { job_id: 1 }.to_json, "CONTENT_TYPE" => "application/json"
+        response = post '/api/v2/logs', { job_id: 1 }.to_json, "CONTENT_TYPE" => "application/json"
         expect(response.status).to eq(422)
       end
 
       it 'responds with 422 on job_id mismatch' do
-        response = post '/logs', { job_id: 2 }.to_json, "CONTENT_TYPE" => "application/json"
+        response = post '/api/v2/logs', { job_id: 2 }.to_json, "CONTENT_TYPE" => "application/json"
         expect(response.status).to eq(422)
       end
     end
 
+    describe 'correctly rewrites form v1' do
+      #post '/api/v1/messages/logs/message',
+    end
+
     describe 'POST /jobs/:job_id/logs' do
       it 'responds with 422 when passed job_id is wrong' do
-        response = post '/jobs/2/logs', { job_id: 1 }.to_json, "CONTENT_TYPE" => "application/json"
+        response = post '/api/v1/jobs/2/logs', { job_id: 1 }.to_json, "CONTENT_TYPE" => "application/json"
         expect(response.status).to eq(422)
       end
     end

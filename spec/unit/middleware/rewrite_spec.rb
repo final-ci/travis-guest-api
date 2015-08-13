@@ -10,15 +10,16 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
     Travis::GuestApi::App.new(job_id, reporter, &callback)
   end
 
+  let(:job_id) { 42 }
   let(:reporter) { double(:reporter) }
   let(:callback) { ->(x) { } }
 
   context "server is run without job_id" do
     let(:job_id) { nil }
-    it 'rewrites job_id to environment' do
-      job_id = 42
-      get("/jobs/#{job_id}/uptime")
-      expect(last_request.env['job_id']).to eq(job_id)
+    it 'rewrites job_id to rack environment' do
+      job_id_URL_param = 42
+      get "/api/v1/jobs/#{job_id_URL_param}/uptime"
+      expect(last_request.env['job_id']).to eq(job_id_URL_param)
       expect(last_response.status).to eq 204
     end
   end
@@ -26,8 +27,43 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
   context "server is run with job_id 42" do
     let(:job_id) { 42 }
     it 'responds with 422 on job_id mismatch' do
-      response = get("/jobs/666/uptime")
+      response = get "/api/v1/jobs/666/uptime"
       expect(response.status).to eq(422)
     end
   end
+
+  describe 'POST /machines/logs/message' do
+    let!(:job_id) { 42 }
+    it 'rewrites logs route' do
+      expected_message = 'test message'
+      expect(reporter).to receive(:send_log).with(job_id, expected_message)
+      response = post "/api/v1/machines/logs/message",
+        { messageText: expected_message },
+        'x-MachineId' => job_id
+      expect(last_request.form_data?).to be true
+      expect(response.status).to eq(200)
+    end
+
+    it 'responds with 422 if MachineId not specified' do
+      response = post "/api/v1/machines/logs/message", messageText: "foo"
+      expect(response.status).to eq(422)
+    end
+  end
+
+  describe 'POST /machines/logs/attachement' do
+    it 'rewrites attachment route' do
+      response = post "/api/v1/machines/logs/attachement",
+        { localTime: '15:42 8/13/2015', indent: 666 }.to_json,
+        "CONTENT_TYPE" => "application/json"
+      expect(response.status).to eq(302)
+    end
+  end
+
+  describe 'POST /machines/networks' do
+    it 'rewrites networks route' do
+      response = post "/api/v1/machines/networks"
+      expect(response.status).to eq(501)
+    end
+  end
+
 end

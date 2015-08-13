@@ -13,7 +13,7 @@ module Travis::GuestApi
     it "starts server" do
       s = Travis::GuestApi::Server.new(1, nil, nil, &callback).start
       sleep 0.5
-      response = Faraday.get "http://localhost:#{s.port}/uptime"
+      response = Faraday.get "http://localhost:#{s.port}/api/v2/uptime"
       s.stop
       expect(response.status).to eq(204)
     end
@@ -34,7 +34,6 @@ module Travis::GuestApi
       sleep 3.5
       expect(Thread.list.size).to eq(initial_thread_count)
     end
-
 
   end
 end
