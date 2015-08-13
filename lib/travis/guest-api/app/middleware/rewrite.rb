@@ -18,7 +18,11 @@ class Travis::GuestApi::App::Middleware
       end
 
       before '/machines/logs/message' do
-        rewrite_logs_part_v1
+        rewrite_logs_v1
+      end
+
+      before '/machines/logs/attachement' do
+        rewrite_attachments_v1
       end
 
       before '/machines/networks' do
@@ -36,11 +40,15 @@ class Travis::GuestApi::App::Middleware
       env['job_id'] = job_id
     end
 
-    def rewrite_logs_part_v1
+    def rewrite_logs_v1
       env['PATH_INFO'] = "#{V2_PREFIX}/logs"
       halt 422, { error: 'x-MachineId must be specified in form data. '}.to_json unless env['x-MachineId']
       request.update_param 'job_id', env.delete('x-MachineId')
       request.update_param 'message', request.delete_param('messageText')
+    end
+
+    def rewrite_attachments_v1
+      env['PATH_INFO'] = "#{V2_PREFIX}/attachments"
     end
 
     def rewrite_networks_v1
