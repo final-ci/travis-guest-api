@@ -9,7 +9,7 @@ class Travis::GuestApi::App::Endpoints
     end
 
     post '/logs' do
-      payload = JSON.parse(request.body.read).slice('job_id', 'message')
+      payload = params.slice('job_id', 'message')
       halt 422, { error: 'Key message and number must be passed'}.to_json unless payload['message']
       @reporter.send_log(@job_id, payload["message"])
       { success: true }.to_json

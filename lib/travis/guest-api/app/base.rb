@@ -6,10 +6,6 @@ module Travis::GuestApi
   class App
     class Base < Sinatra::Base
 
-      register Sinatra::MultiRoute
-
-      set :prefix, '/'
-
       before do
         env['rack.logger'] = Travis.logger
         env['rack.errors'] = Travis.logger.instance_variable_get(:@logdev).dev rescue nil

@@ -17,7 +17,7 @@ module Travis::GuestApi
 
     describe 'GET /uptime' do
       it 'returns 204' do
-        response = get '/uptime'
+        response = get '/api/v2/uptime'
         expect(response.status).to eq(204)
       end
     end
