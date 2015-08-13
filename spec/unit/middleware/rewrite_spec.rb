@@ -16,7 +16,7 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
 
   context "server is run without job_id" do
     let(:job_id) { nil }
-    it 'rewrites job_id to environment' do
+    it 'rewrites job_id to rack environment' do
       job_id_URL_param = 42
       get "/api/v1/jobs/#{job_id_URL_param}/uptime"
       expect(last_request.env['job_id']).to eq(job_id_URL_param)
@@ -32,7 +32,7 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
     end
   end
 
-  describe '/machines/logs/message' do
+  describe 'POST /machines/logs/message' do
     let!(:job_id) { 42 }
     it 'rewrites logs route' do
       expected_message = 'test message'
@@ -50,7 +50,39 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
     end
   end
 
-  describe '/machines/networks' do
+  describe 'POST /api/v1/machines/logs/attachement' do
+    TEST_FILE_PATH = File.dirname(__FILE__) + "/../../../README.md"
+    test_file = Rack::Test::UploadedFile.new(TEST_FILE_PATH)
+
+    it 'rewrites attachment route' do
+      post "/api/v1/machines/logs/attachement",
+        localTime: '15:42 8/13/2015',
+        indent: 666,
+        file: test_file,
+        jobId: 42
+
+      expect(last_request.env["CONTENT_TYPE"]).to include("multipart/form-data;")
+      expect(last_response.status).to eq(302)
+    end
+
+    it 'returns 422 when time not specified' do
+      post "/api/v1/machines/logs/attachement",
+        indent: 666,
+        file: test_file,
+        jobId: 42
+      expect(last_response.status).to eq(422)
+    end
+
+    it 'returns 422 when indent not specified' do
+      post "/api/v1/machines/logs/attachement",
+        localTime: '15:42 8/13/2015',
+        file: test_file,
+        jobId: 42
+      expect(last_response.status).to eq(422)
+    end
+  end
+
+  describe 'POST /machines/networks' do
     it 'rewrites networks route' do
       response = post "/api/v1/machines/networks"
       expect(response.status).to eq(501)

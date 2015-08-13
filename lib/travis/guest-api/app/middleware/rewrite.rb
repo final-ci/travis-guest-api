@@ -1,4 +1,3 @@
-require 'spec_helper'
 require 'travis/guest-api/app/base'
 require "sinatra/namespace"
 require 'ostruct'
@@ -11,14 +10,19 @@ class Travis::GuestApi::App::Middleware
 
     V1_PREFIX = '/api/v1'
     V2_PREFIX = '/api/v2'
+    JOB_ID_PATTERN = %r{/api/v\d+/jobs/(\d+)}
+
+    before JOB_ID_PATTERN do |job_id|
+      rewrite_job_id_part(job_id.to_i)
+    end
 
     namespace V1_PREFIX do
-      before '/jobs/:job_id/*' do
-        rewrite_job_id_part_v1(params[:job_id].to_i)
+      before '/machines/logs/message' do
+        rewrite_logs_v1
       end
 
-      before '/machines/logs/message' do
-        rewrite_logs_part_v1
+      before '/machines/logs/attachement' do
+        rewrite_attachments_v1
       end
 
       before '/machines/networks' do
@@ -26,21 +30,32 @@ class Travis::GuestApi::App::Middleware
       end
     end
 
-    def rewrite_job_id_part_v1(job_id)
+    def rewrite_job_id_part(job_id)
       if env['job_id'] && (env['job_id'] != job_id)
         halt 422, { error: 'Job_id specified in both URL and body but they do not match!' }.to_json
       end
 
-      jobs_url_segment = %r{\A#{V1_PREFIX}/jobs/(\d+)(?=/)}
-      env['PATH_INFO'].sub!(jobs_url_segment, V2_PREFIX)
+      env['PATH_INFO'].sub!(JOB_ID_PATTERN, V2_PREFIX)
       env['job_id'] = job_id
     end
 
-    def rewrite_logs_part_v1
+    def rewrite_logs_v1
       env['PATH_INFO'] = "#{V2_PREFIX}/logs"
-      halt 422, { error: 'x-MachineId must be specified in form data. '}.to_json unless env['x-MachineId']
+      unless env['x-MachineId']
+        halt 422, { error: 'x-MachineId must be specified in form data. '}.to_json
+      end
       request.update_param 'job_id', env.delete('x-MachineId')
       request.update_param 'message', request.delete_param('messageText')
+    end
+
+    def rewrite_attachments_v1
+      missing_properties = ['localTime', 'indent'].find_all { |p| !params[p] }
+      halt(422, {
+        error: "The following properties were not specified: #{missing_properties}"
+      }) unless missing_properties.empty?
+      request.update_param 'local_time', request.delete_param('localTime')
+      request.update_param 'job_id', env.delete('x-MachineId')
+      env['PATH_INFO'] = "#{V2_PREFIX}/attachments"
     end
 
     def rewrite_networks_v1
