@@ -32,14 +32,6 @@ module Travis::GuestApi
         expect(last_response.status).to eq(422)
       end
 
-      it 'returns 422 when filename not specified' do
-        post "/api/v2/attachments",
-          localTime: '15:42 8/13/2015',
-          indent: 666,
-          file: { filename: '' }
-        expect(last_response.status).to eq(422)
-      end
-
       it 'redirects to attachment service' do
         post "/api/v2/attachments",
           local_time: '15:42 8/13/2015',

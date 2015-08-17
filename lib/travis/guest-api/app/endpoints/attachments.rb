@@ -11,8 +11,6 @@ class Travis::GuestApi::App::Endpoints
 
     post '/attachments' do
       halt 422, { error: 'No file uploaded.'} unless params[:file]
-      halt 422, { error: 'Filename must be specified.' } if
-        params[:file][:filename].nil? || params[:file][:filename].empty?
 
       redirect to(Travis::GuestApi.config.attachment_service_URL)
     end

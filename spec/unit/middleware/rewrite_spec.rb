@@ -64,28 +64,12 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
       expect(last_request.env["CONTENT_TYPE"]).to include("multipart/form-data;")
       expect(last_response.status).to eq(302)
     end
-
-    it 'returns 422 when time not specified' do
-      post "/api/v1/machines/logs/attachement",
-        indent: 666,
-        file: test_file,
-        jobId: 42
-      expect(last_response.status).to eq(422)
-    end
-
-    it 'returns 422 when indent not specified' do
-      post "/api/v1/machines/logs/attachement",
-        localTime: '15:42 8/13/2015',
-        file: test_file,
-        jobId: 42
-      expect(last_response.status).to eq(422)
-    end
   end
 
   describe 'POST /machines/networks' do
     it 'rewrites networks route' do
-      response = post "/api/v1/machines/networks"
-      expect(response.status).to eq(501)
+      post "/api/v1/machines/networks"
+      expect(last_response.status).to eq(501)
     end
   end
 

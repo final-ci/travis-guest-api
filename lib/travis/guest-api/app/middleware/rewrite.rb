@@ -49,12 +49,6 @@ class Travis::GuestApi::App::Middleware
     end
 
     def rewrite_attachments_v1
-      missing_properties = ['localTime', 'indent'].find_all { |p| !params[p] }
-      halt(422, {
-        error: "The following properties were not specified: #{missing_properties}"
-      }) unless missing_properties.empty?
-      request.update_param 'local_time', request.delete_param('localTime')
-      request.update_param 'job_id', env.delete('x-MachineId')
       env['PATH_INFO'] = "#{V2_PREFIX}/attachments"
     end
 
