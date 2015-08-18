@@ -37,7 +37,7 @@ module Travis::GuestApi
           local_time: '15:42 8/13/2015',
           indent: 666,
           file: @test_file,
-          job_id: 42
+          job_id: 1
         expect(last_request.env["CONTENT_TYPE"]).to include("multipart/form-data;")
         expect(last_response).to be_redirect
         follow_redirect!

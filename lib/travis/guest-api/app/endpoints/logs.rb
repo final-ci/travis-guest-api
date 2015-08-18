@@ -5,8 +5,6 @@ class Travis::GuestApi::App::Endpoints
 
     before do
       @reporter = env['reporter']
-      @job_id = env['job_id'] ? env['job_id'] : params['job_id']
-      halt 422, { error: 'Job ID must be specified.'} unless @job_id
     end
 
     post '/logs' do

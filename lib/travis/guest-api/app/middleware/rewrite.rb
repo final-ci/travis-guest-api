@@ -32,7 +32,10 @@ class Travis::GuestApi::App::Middleware
 
     def rewrite_job_id_part(job_id)
       if env['job_id'] && (env['job_id'] != job_id)
-        halt 422, { error: 'Job_id specified in both URL and body but they do not match!' }.to_json
+        halt 422, {
+          error: 'Job_id specified both on startup and'\
+                 'in the request but they do not match!'
+        }.to_json
       end
 
       env['PATH_INFO'].sub!(JOB_ID_PATTERN, V2_PREFIX)
