@@ -7,11 +7,14 @@ require 'multi_json'
 require 'travis/guest-api/app/middleware/rewrite'
 require 'travis/guest-api/app/endpoints/testcases'
 require 'travis/guest-api/app/endpoints/logs'
+require 'travis/guest-api/app/endpoints/started'
 require 'travis/guest-api/app/endpoints/finished'
 require 'travis/guest-api/app/endpoints/home'
 require 'travis/guest-api/app/endpoints/uptime'
 require 'travis/guest-api/app/endpoints/networks'
 require 'travis/guest-api/app/endpoints/attachments'
+require 'travis/guest-api/app/endpoints/restarts'
+require 'travis/guest-api/app/endpoints/snapshots'
 
 #require 'travis/worker'
 #require 'travis/worker/reporter'
@@ -39,10 +42,13 @@ module Travis::GuestApi
         map '/api/v2' do
           use Travis::GuestApi::App::Endpoints::Logs
           use Travis::GuestApi::App::Endpoints::TestCases
+          use Travis::GuestApi::App::Endpoints::Started
           use Travis::GuestApi::App::Endpoints::Finished
           use Travis::GuestApi::App::Endpoints::Uptime
           use Travis::GuestApi::App::Endpoints::Networks
           use Travis::GuestApi::App::Endpoints::Attachments
+          use Travis::GuestApi::App::Endpoints::Restarts
+          use Travis::GuestApi::App::Endpoints::Snapshots
           run Travis::GuestApi::App::Endpoints::Home.new
         end
       end
