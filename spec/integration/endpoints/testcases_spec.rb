@@ -26,16 +26,19 @@ module Travis::GuestApi
       let(:testcase_with_data) { testcase.update('test_data' => { 'any_content' => 'xxx' }, 'duration' => 56) }
 
       describe 'POST /testcases' do
-        it 'sends data to the pusher' do
+        it 'sends data to the reporter' do
           expect(reporter).to receive(:send_tresult) { |job_id, arg|
             expect(job_id).to eq(testcase['job_id'])
             e = testcase.dup
             e.delete 'job_id'
+            expect(arg['uuid']).to be_a(String)
+            e['uuid'] = arg['uuid']
             expect(arg).to eq(e)
           }
           expect(reporter).to receive(:send_tresult) { |job_id, arg|
             e = testcase_with_data.dup
             e.delete 'job_id'
+            arg.delete 'uuid'
             expect(arg).to eq(e)
           }
 
