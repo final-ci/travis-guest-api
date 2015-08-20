@@ -1,7 +1,7 @@
 require 'travis/guest-api/app/base'
 
 class Travis::GuestApi::App::Endpoints
-  class TestCases < Travis::GuestApi::App::Base
+  class Steps < Travis::GuestApi::App::Base
 
     before do
       @job_id = env['job_id']
@@ -9,7 +9,7 @@ class Travis::GuestApi::App::Endpoints
     end
 
     #calls TestStepResult.write_result through amqp
-    post '/testcases' do
+    post '/steps' do
       payload = JSON.parse(request.body.read)
       halt 422, { error: 'Keys name, classname, result are mandatory!' }.to_json unless
         payload['name'] and payload['classname'] and payload['result']
@@ -19,11 +19,11 @@ class Travis::GuestApi::App::Endpoints
       #Cache.put(@job_id,payload['uuid'], sanitized_payload)
     end
 
-    get 'testcases/:id' do
+    get 'steps/:id' do
       #Cache.get(@job_id, params[:id])
     end
 
-    put 'testcases/:id' do
+    put 'steps/:id' do
       halt 422, { error: 'Keys name, classname are mandator!' }.to_json unless
         params['name'] and params['classname']
       sanitized_payload = params.slice('id', 'name', 'classname', 'result', 'duration', 'test_data')
