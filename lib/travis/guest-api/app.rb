@@ -11,6 +11,7 @@ require 'travis/guest-api/app/endpoints/finished'
 require 'travis/guest-api/app/endpoints/home'
 require 'travis/guest-api/app/endpoints/uptime'
 require 'travis/guest-api/app/endpoints/networks'
+require 'travis/guest-api/app/endpoints/attachments'
 
 #require 'travis/worker'
 #require 'travis/worker/reporter'
@@ -41,6 +42,7 @@ module Travis::GuestApi
           use Travis::GuestApi::App::Endpoints::Finished
           use Travis::GuestApi::App::Endpoints::Uptime
           use Travis::GuestApi::App::Endpoints::Networks
+          use Travis::GuestApi::App::Endpoints::Attachments
           run Travis::GuestApi::App::Endpoints::Home.new
         end
       end
