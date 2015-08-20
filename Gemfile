@@ -26,6 +26,7 @@ group :test do
   gem 'json-schema'
   gem 'factory_girl',     '~> 2.6.0'
   gem 'database_cleaner', '~> 1.4.1'
+  gem 'codeclimate-test-reporter', require: nil
 end
 
 platform :jruby do
