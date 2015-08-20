@@ -25,7 +25,7 @@ module Travis::GuestApi
       }
       let(:testcase_with_data) { testcase.update('test_data' => { 'any_content' => 'xxx' }, 'duration' => 56) }
 
-      describe 'POST /testcases' do
+      describe 'POST /steps' do
         it 'sends data to the reporter' do
           expect(reporter).to receive(:send_tresult) { |job_id, arg|
             expect(job_id).to eq(testcase['job_id'])
@@ -42,34 +42,34 @@ module Travis::GuestApi
             expect(arg).to eq(e)
           }
 
-          response = post '/api/v2/testcases', testcase.to_json, "CONTENT_TYPE" => "application/json"
+          response = post '/api/v2/steps', testcase.to_json, "CONTENT_TYPE" => "application/json"
           expect(response.status).to eq(200)
 
-          response = post '/api/v2/testcases', testcase_with_data.to_json, "CONTENT_TYPE" => "application/json"
+          response = post '/api/v2/steps', testcase_with_data.to_json, "CONTENT_TYPE" => "application/json"
           expect(response.status).to eq(200)
         end
 
         it 'responds with 422 when name, classname or result is missing' do
           without_name = testcase.dup
           without_name.delete 'name'
-          response = post '/api/v2/testcases', without_name.to_json, "CONTENT_TYPE" => "application/json"
+          response = post '/api/v2/steps', without_name.to_json, "CONTENT_TYPE" => "application/json"
           expect(response.status).to eq(422)
 
           without_classname = testcase.dup
           without_classname.delete 'classname'
-          response = post '/api/v2/testcases', without_classname.to_json, "CONTENT_TYPE" => "application/json"
+          response = post '/api/v2/steps', without_classname.to_json, "CONTENT_TYPE" => "application/json"
           expect(response.status).to eq(422)
 
           without_result = testcase.dup
           without_result.delete 'result'
-          response = post '/api/v2/testcases', without_result.to_json, "CONTENT_TYPE" => "application/json"
+          response = post '/api/v2/steps', without_result.to_json, "CONTENT_TYPE" => "application/json"
           expect(response.status).to eq(422)
         end
       end
 
-      describe 'POST /jobs/:job_id/testcases' do
+      describe 'POST /jobs/:job_id/steps' do
         it 'responds with 422 when passed job_id is wrong' do
-          response = post '/api/v1/jobs/2/testcases', testcase.to_json, "CONTENT_TYPE" => "application/json"
+          response = post '/api/v1/jobs/2/steps', testcase.to_json, "CONTENT_TYPE" => "application/json"
           expect(response.status).to eq(422)
         end
       end

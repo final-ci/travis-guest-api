@@ -5,7 +5,7 @@ require 'rack/parser'
 require 'multi_json'
 
 require 'travis/guest-api/app/middleware/rewrite'
-require 'travis/guest-api/app/endpoints/testcases'
+require 'travis/guest-api/app/endpoints/steps'
 require 'travis/guest-api/app/endpoints/logs'
 require 'travis/guest-api/app/endpoints/started'
 require 'travis/guest-api/app/endpoints/finished'
@@ -41,7 +41,7 @@ module Travis::GuestApi
         use Travis::GuestApi::App::Middleware::Rewrite
         map '/api/v2' do
           use Travis::GuestApi::App::Endpoints::Logs
-          use Travis::GuestApi::App::Endpoints::TestCases
+          use Travis::GuestApi::App::Endpoints::Steps
           use Travis::GuestApi::App::Endpoints::Started
           use Travis::GuestApi::App::Endpoints::Finished
           use Travis::GuestApi::App::Endpoints::Uptime
