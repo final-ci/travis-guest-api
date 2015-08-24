@@ -123,6 +123,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport (~> 4.2.3)
   codeclimate-test-reporter
   database_cleaner (~> 1.4.1)
   factory_girl (~> 2.6.0)

@@ -12,31 +12,30 @@ class Travis::GuestApi::App::Endpoints
         error: 'Keys name, classname, result are mandatory!'
       }.to_json unless params['name'] && params['classname'] && params['result']
       params['uuid'] = SecureRandom.uuid
-      sanitized_payload = params.slice('uuid',
-                                       'name',
-                                       'classname',
-                                       'result',
-                                       'duration',
-                                       'test_data')
+      sanitized_payload = params.slice(
+        'uuid',
+        'name',
+        'classname',
+        'result',
+        'duration',
+        'test_data')
       @reporter.send_tresult(@job_id, sanitized_payload)
       # Cache.put(@job_id,payload['uuid'], sanitized_payload)
     end
 
-    get 'steps/:id' do
-      # Cache.get(@job_id, params[:id])
+    get 'steps/:uuid' do
+      # Cache.get(@job_id, params[:uuid])
     end
 
-    put 'steps/:id' do
-      halt 422, { error: 'Keys name, classname are mandator!' }.to_json unless
-        params['name'] && params['classname']
-      sanitized_payload = params.slice('id',
-                                       'name',
-                                       'classname',
-                                       'result',
-                                       'duration',
-                                       'test_data')
+    put 'steps/:uuid' do
+      sanitized_payload = params.slice(
+        'name',
+        'classname',
+        'result',
+        'duration',
+        'test_data')
       @reporter.send_tresult_update(@job_id, sanitized_payload)
-      # Cache.put(@job_id,payload['id'], sanitized_payload)
+      # Cache.put(@job_id,payload['uuid'], sanitized_payload)
     end
   end
 end
