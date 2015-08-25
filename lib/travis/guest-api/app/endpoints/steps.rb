@@ -8,14 +8,12 @@ class Travis::GuestApi::App::Endpoints
       @reporter = env['reporter']
     end
 
-    #calls TestStepResult.write_result through amqp
     post '/steps' do
       halt 422, { error: 'Keys name, classname, result are mandatory!' }.to_json unless
         params['name'] and params['classname'] and params['result']
       params['uuid'] = SecureRandom.uuid
       sanitized_payload = params.slice('uuid', 'name', 'classname', 'result', 'duration', 'test_data')
       @reporter.send_tresult(@job_id, sanitized_payload)
-      # https://github.com/SamSaffron/lru_redux ?
       #Cache.put(@job_id,payload['uuid'], sanitized_payload)
     end
 
