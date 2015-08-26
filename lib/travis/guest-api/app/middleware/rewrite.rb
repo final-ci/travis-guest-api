@@ -70,12 +70,17 @@ class Travis::GuestApi::App::Middleware
     def rewrite_steps_v1
       env['PATH_INFO'] = "#{V2_PREFIX}/steps"
       rewrite_x_machine_id_v1()
-      if params['stepStack'].nil? or params['stepStack'].last.nil?
+
+      unless params['stepStack'] and 
+             params['stepStack'].kind_of?(Array) and
+             params['stepStack'].last
         halt 422, 
-        { error: 'StepStack must be an array containing step name as last element.' }.to_json 
+        { error: 'Property "stepStack" must be an array '\
+                 'containing step name as last element.' }.to_json 
       end
 
       request.update_param 'name', params[:stepStack].last
+      request.update_param 'classname', params[:stepStack][-2]
       request.delete_param(:stepStack)
     end
 
