@@ -20,14 +20,17 @@ class Travis::GuestApi::App::Endpoints
         'duration',
         'test_data')
       @reporter.send_tresult(@job_id, sanitized_payload)
-      # Cache.put(@job_id,payload['uuid'], sanitized_payload)
+      Travis::GuestApi.cache.set(@job_id, params['uuid'], sanitized_payload)
+      sanitized_payload.to_json
     end
 
-    get 'steps/:uuid' do
-      # Cache.get(@job_id, params[:uuid])
+    get '/steps/:uuid' do
+      cached_step = Travis::GuestApi.cache.get(@job_id, params[:uuid])
+      halt 403, error: 'Requested step could not be found.' unless cached_step
+      cached_step.to_json
     end
 
-    put 'steps/:uuid' do
+    put '/steps/:uuid' do
       sanitized_payload = params.slice(
         'name',
         'classname',
@@ -35,7 +38,7 @@ class Travis::GuestApi::App::Endpoints
         'duration',
         'test_data')
       @reporter.send_tresult_update(@job_id, sanitized_payload)
-      # Cache.put(@job_id,payload['uuid'], sanitized_payload)
+      # Cache.put(@job_id, payload['uuid'], sanitized_payload)
     end
   end
 end

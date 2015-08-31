@@ -30,6 +30,13 @@ group :test do
   gem 'codeclimate-test-reporter', require: nil
 end
 
+group :development do
+  gem 'racksh'
+  gem 'pry'
+  gem 'pry-doc',       '~> 0.6.0'
+  gem 'method_source', '~> 0.8.2'
+end
+
 platform :jruby do
   gem 'march_hare',     '~> 2.7.0'
 end

@@ -1,23 +1,31 @@
 require 'active_support/core_ext/numeric/time'
 
 module Travis::GuestAPI
-  # Remembers steps so that they can be
-  # provided in route GET steps/:uuid
+  # Remembers steps by their jobs so that
+  # they can be  provided in route GET steps/:uuid
   # for backward compatibility.
   class Cache
     def initialize(max_job_time = 24.hours, gc_polling_interval = 1.hour)
       @cache = {}
       @max_job_time = max_job_time
       @mutex = Mutex.new
+      initialize_garbage_collector gc_polling_interval
+    end
 
-      gc_thread = Thread.new do
-        loop do
-          puts "Next GC in #{gc_polling_interval} seconds."
-          sleep gc_polling_interval.to_i # fails in jruby without to_i
-          gc
+    def initialize_garbage_collector(polling_interval)
+      Thread.new do
+        begin
+          loop do
+            Travis.logger.debug "Next step cache GC in #{polling_interval} seconds."
+            sleep polling_interval.to_i # fails in jruby without to_i
+            gc
+          end
+        rescue StandardError => e
+          Travis.logger.error 'Step Cache GC exploded.'
+          Travis.logger.error e
+          raise e
         end
       end
-      gc_thread.abort_on_exception = true
     end
 
     def set(job_id, step_uuid, result)
@@ -30,6 +38,8 @@ module Travis::GuestAPI
         @cache[job_id][step_uuid] ||= {}
         @cache[job_id][step_uuid].update(result)
       end
+
+      @cache[job_id][step_uuid]
     end
 
     def get(job_id, step_uuid)
@@ -54,5 +64,7 @@ module Travis::GuestAPI
       end
       Travis.logger.debug 'Garbage collector finished'
     end
+
+    private :initialize_garbage_collector, :gc
   end
 end

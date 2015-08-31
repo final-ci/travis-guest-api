@@ -8,19 +8,20 @@ describe Travis::GuestAPI::Cache do
   let(:max_job_time) { 5.minutes }
   let(:gc_polling_interval) { 5.minutes }
   let(:cache) { Travis::GuestAPI::Cache.new max_job_time, gc_polling_interval }
+  let(:test_uuid) { 'ffdec891-ac4d-4187-a228-3edbe474c775' }
 
   describe '#set' do
     it 'persists given value' do
       job_id = 42
-      step_uuid = SecureRandom.uuid
       result = { foo: 'test result' }
-      cache.set job_id, step_uuid, result
-      expect(cache.get job_id, step_uuid).to eq result
+      cache.set job_id, test_uuid, result
+      expect(cache.get job_id, test_uuid).to eq result
     end
 
     it 'throws when result is not a hash' do
-      set_wrong_result = -> { cache.set 42, SecureRandom.uuid, 'not a hash' }
-      expect { set_wrong_result.call }.to raise_error ArgumentError
+      expect do
+        cache.set 42, test_uuid, 'not a hash'
+      end.to raise_error ArgumentError
     end
   end
 
@@ -31,22 +32,18 @@ describe Travis::GuestAPI::Cache do
 
       it 'returns Nil' do
         job_id = 666
-        step_uuid = SecureRandom.uuid
-        cache.set job_id, step_uuid, foo: 'bar'
-        timeout(5) do
-          sleep 0.001 until cache.get(job_id, step_uuid).nil?
-        end
-        expect(cache.get job_id, step_uuid).to be_nil
+        cache.set job_id, test_uuid, foo: 'bar'
+        sleep 0.1
+        expect(cache.get job_id, test_uuid).to be_nil
       end
     end
 
     context 'record alive' do
       it 'returns record' do
         job_id = 666
-        step_uuid = SecureRandom.uuid
         record = { foo: 'bar' }
-        cache.set job_id, step_uuid, record
-        expect(cache.get job_id, step_uuid).to eq record
+        cache.set job_id, test_uuid, record
+        expect(cache.get job_id, test_uuid).to eq record
       end
     end
   end
@@ -54,10 +51,9 @@ describe Travis::GuestAPI::Cache do
   describe '#delete' do
     it 'deletes specified record' do
       job_id = 666
-      step_uuid = SecureRandom.uuid
-      cache.set job_id, step_uuid, foo: 'bar'
+      cache.set job_id, test_uuid, foo: 'bar'
       cache.delete job_id
-      expect(cache.get job_id, step_uuid).to be_nil
+      expect(cache.get job_id, test_uuid).to be_nil
     end
   end
 end

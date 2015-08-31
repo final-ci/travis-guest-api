@@ -55,7 +55,7 @@ class Travis::GuestApi::App::Middleware
 
     def rewrite_logs_v1
       env['PATH_INFO'] = "#{V2_PREFIX}/logs"
-      rewrite_x_machine_id_v1()
+      rewrite_x_machine_id_v1
       request.update_param 'message', request.delete_param('messageText')
     end
 
@@ -69,12 +69,12 @@ class Travis::GuestApi::App::Middleware
 
     def rewrite_steps_v1
       env['PATH_INFO'] = "#{V2_PREFIX}/steps"
-      rewrite_x_machine_id_v1()
+      rewrite_x_machine_id_v1
 
       unless params['stepStack'] and 
-             params['stepStack'].kind_of?(Array) and
+             params['stepStack'].is_a?(Array) and
              params['stepStack'].last
-        halt 422, 
+        halt 422,
         { error: 'Property "stepStack" must be an array '\
                  'containing step name as last element.' }.to_json 
       end
