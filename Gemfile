@@ -12,6 +12,7 @@ gem 'sinatra-contrib'
 gem 'rack-contrib',    github: 'rack/rack-contrib'
 gem 'rack-parser', :require => 'rack/parser'
 gem 'multi_json', '~> 1.0'
+gem 'activesupport', '~> 4.2.3'
 
 #gem 'celluloid'
 
@@ -27,6 +28,13 @@ group :test do
   gem 'factory_girl',     '~> 2.6.0'
   gem 'database_cleaner', '~> 1.4.1'
   gem 'codeclimate-test-reporter', require: nil
+end
+
+group :development do
+  gem 'racksh'
+  gem 'pry'
+  gem 'pry-doc',       '~> 0.6.0'
+  gem 'method_source', '~> 0.8.2'
 end
 
 platform :jruby do

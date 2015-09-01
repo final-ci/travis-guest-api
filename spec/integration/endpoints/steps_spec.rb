@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'ostruct'
-
 require 'rack/test'
 
 module Travis::GuestApi
@@ -12,7 +11,7 @@ module Travis::GuestApi
     end
 
     let(:reporter) { double(:reporter) }
-    let(:callback) { ->(x) { } }
+    let(:callback) { ->(_) {} }
 
     context 'testcase' do
       let(:testcase) {
@@ -20,10 +19,15 @@ module Travis::GuestApi
           'job_id'    => 1,
           'name'      => 'testName',
           'classname' => 'className',
-          'result'    => 'success',
+          'result'    => 'success'
         }
       }
-      let(:testcase_with_data) { testcase.update('test_data' => { 'any_content' => 'xxx' }, 'duration' => 56) }
+
+      let(:testcase_with_data) {
+        testcase.update(
+          'test_data' => { 'any_content' => 'xxx' },
+          'duration' => 56)
+      }
 
       describe 'POST /steps' do
         it 'sends data to the reporter' do
@@ -65,12 +69,51 @@ module Travis::GuestApi
           response = post '/api/v2/steps', without_result.to_json, "CONTENT_TYPE" => "application/json"
           expect(response.status).to eq(422)
         end
+
+        it 'generates step uuid' do
+          expect(reporter).to receive(:send_tresult)
+          post '/api/v2/steps',
+               testcase.to_json,
+               'CONTENT_TYPE' => 'application/json'
+          expect(JSON.parse last_response.body).to include('uuid')
+        end
       end
 
       describe 'POST /jobs/:job_id/steps' do
         it 'responds with 422 when passed job_id is wrong' do
           response = post '/api/v1/jobs/2/steps', testcase.to_json, "CONTENT_TYPE" => "application/json"
           expect(response.status).to eq(422)
+        end
+      end
+
+      describe 'GET /steps/:step_uuid' do
+        it 'returns previously created step' do
+          expect(reporter).to receive(:send_tresult)
+          post '/api/v2/steps',
+               testcase.to_json,
+               'CONTENT_TYPE' => 'application/json'
+          step_uuid = (JSON.parse last_response.body)['uuid']
+          get "/api/v2/steps/#{step_uuid}"
+          response_body = JSON.parse last_response.body
+          expected_testcase = testcase.dup
+          expected_testcase.delete 'job_id'
+          expected_testcase['uuid'] = step_uuid
+          expect(response_body).to eq expected_testcase
+        end
+
+        it 'returns 403 if step does not exist' do
+          get 'api/v2/steps/i_made_it_up'
+          expect(last_response.status).to eq 403
+        end
+      end
+
+      describe 'PUT /steps/:step_uuid' do
+        it 'modifies existing step' do
+          
+        end
+        
+        it 'returns 403 if step does not exist' do
+          
         end
       end
     end
