@@ -13,7 +13,7 @@ module Travis::GuestAPI
     end
 
     def initialize_garbage_collector(polling_interval)
-      Thread.new do
+      @thread = Thread.new do
         begin
           loop do
             Travis.logger.debug "Next step cache GC in #{polling_interval} seconds."
@@ -62,6 +62,15 @@ module Travis::GuestAPI
         delete(job_id) if @cache[job_id][:last_time_used] < expired_time
       end
       Travis.logger.debug 'Garbage collector finished'
+    end
+
+    # Use only if you will never ever use this class again
+    #
+    def finalize
+      @mutex.synchronize do
+        Thread.kill(@thread) if @thread
+        @cache = {}
+      end
     end
 
     private :initialize_garbage_collector, :gc

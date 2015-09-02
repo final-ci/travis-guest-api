@@ -10,6 +10,8 @@ describe Travis::GuestAPI::Cache do
   let(:cache) { Travis::GuestAPI::Cache.new max_job_time, gc_polling_interval }
   let(:test_uuid) { 'ffdec891-ac4d-4187-a228-3edbe474c775' }
 
+  after(:each) { cache.finalize }
+
   describe '#set' do
     it 'persists given value' do
       job_id = 42
