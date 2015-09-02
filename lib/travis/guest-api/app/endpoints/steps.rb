@@ -31,14 +31,19 @@ class Travis::GuestApi::App::Endpoints
     end
 
     put '/steps/:uuid' do
+      halt 403, {
+        error: 'Properties "name" and "classname" are read-only.'
+      }.to_json if params['name'] || params['classname']
       sanitized_payload = params.slice(
-        'name',
-        'classname',
+        'uuid',
         'result',
         'duration',
         'test_data')
+      cached_step = Travis::GuestApi.cache.get(@job_id, sanitized_payload['uuid'])
+      halt 403, error: 'Requested step could not be found.' unless cached_step
       @reporter.send_tresult_update(@job_id, sanitized_payload)
-      # Cache.put(@job_id, payload['uuid'], sanitized_payload)
+      cached_step = Travis::GuestApi.cache.set(@job_id, sanitized_payload['uuid'], sanitized_payload)
+      cached_step.to_json
     end
   end
 end

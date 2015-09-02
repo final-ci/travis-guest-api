@@ -21,8 +21,7 @@ module Travis::GuestAPI
             gc
           end
         rescue StandardError => e
-          Travis.logger.error 'Step Cache GC exploded.'
-          Travis.logger.error e
+          Travis.logger.error "Step Cache GC exploded: #{e.class}: #{e.message}"
           raise e
         end
       end
