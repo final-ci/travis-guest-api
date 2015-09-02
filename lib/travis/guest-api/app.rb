@@ -28,12 +28,7 @@ module Travis::GuestApi
 
     def initialize(job_id, reporter = nil, &block)
       @job_id = job_id
-      @reporter = reporter # || Travis::Worker::Reporter.new(
-      #  'standalone-reporter',
-      #  Travis::Amqp::Publisher.jobs('builds', unique_channel: true, dont_retry: true),
-      #  Travis::Amqp::Publisher.jobs('logs', unique_channel: true, dont_retry: true),
-      #  Travis::Amqp::Publisher.jobs('test_results', unique_channel: true, dont_retry: true)
-      #)
+      @reporter = reporter
       @msg_handler = block
 
       @app = Rack::Builder.app do

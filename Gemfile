@@ -10,7 +10,7 @@ gem 'travis-config', '~> 0.1.0'
 gem 'sinatra'
 gem 'sinatra-contrib'
 gem 'rack-contrib',    github: 'rack/rack-contrib'
-gem 'rack-parser', :require => 'rack/parser'
+gem 'rack-parser',     github: 'lksv/rack-parser', branch: 'fix_json_array', require: 'rack/parser'
 gem 'multi_json', '~> 1.0'
 gem 'activesupport', '~> 4.2.3'
 
@@ -37,7 +37,12 @@ group :development do
   gem 'method_source', '~> 0.8.2'
 end
 
+platform :mri do
+  gem 'bunny'
+end
+
 platform :jruby do
   gem 'march_hare',     '~> 2.7.0'
 end
+
 gem 'puma'

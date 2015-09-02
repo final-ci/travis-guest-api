@@ -61,7 +61,7 @@ module Travis::GuestApi
           expect(response.status).to eq(200)
         end
 
-        it 'responds with 422 when name, classname or result is missing' do
+        it 'responds with 422 when name, classname is missing' do
           without_name = testcase.dup
           without_name.delete 'name'
           response = post '/api/v2/steps', without_name.to_json, "CONTENT_TYPE" => "application/json"
@@ -70,11 +70,6 @@ module Travis::GuestApi
           without_classname = testcase.dup
           without_classname.delete 'classname'
           response = post '/api/v2/steps', without_classname.to_json, "CONTENT_TYPE" => "application/json"
-          expect(response.status).to eq(422)
-
-          without_result = testcase.dup
-          without_result.delete 'result'
-          response = post '/api/v2/steps', without_result.to_json, "CONTENT_TYPE" => "application/json"
           expect(response.status).to eq(422)
         end
 

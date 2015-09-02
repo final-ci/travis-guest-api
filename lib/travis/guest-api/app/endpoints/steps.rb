@@ -9,13 +9,15 @@ class Travis::GuestApi::App::Endpoints
 
     post '/steps' do
       halt 422, {
-        error: 'Keys name, classname, result are mandatory!'
-      }.to_json unless params['name'] && params['classname'] && params['result']
-      params['uuid'] = SecureRandom.uuid
+        error: 'Keys name, classname are mandatory!'
+      }.to_json unless params['name'] && params['classname']
+      params['uuid'] ||= SecureRandom.uuid
       sanitized_payload = params.slice(
         'uuid',
         'name',
+        'position',
         'classname',
+        'class_position',
         'result',
         'duration',
         'test_data')
