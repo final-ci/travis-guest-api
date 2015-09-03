@@ -74,9 +74,9 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
   end
 
   describe 'POST /machines/steps' do
-    
+
     it 'returns 422 if machine id not specified' do
-      request = { 
+      request = {
         stepStack: ['test_case_is_second_last','test_step_is_last'],
         result: 'a big failure',
         classname: 'test_class' # classname = testcase
@@ -85,12 +85,12 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
       post '/api/v1/machines/steps',
       request.to_json,
       { "CONTENT_TYPE" => "application/json" }
-      
+
       expect(last_response.status).to eq(422)
     end
 
     it 'returns 422 if step name not specified' do
-      request = { 
+      request = {
         stepStack: [],
         result: 'a big failure',
       }
@@ -98,12 +98,12 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
       post '/api/v1/machines/steps',
         request,
         'x-MachineId' => job_id
-      
+
       expect(last_response.status).to eq(422)
     end
 
     it 'returns 422 if stepStack is not an array' do
-      request = { 
+      request = {
         stepStack: 'not an array',
         result: 'a big failure'
       }
@@ -111,12 +111,12 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
       post '/api/v1/machines/steps',
         request,
         'x-MachineId' => job_id
-      
+
       expect(last_response.status).to eq(422)
     end
 
     it 'rewrites step to name' do
-      request = { 
+      request = {
         stepStack: ['test_case_is_second_last','test_step_is_last'],
         result: 'a big success',
       }
@@ -126,13 +126,13 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
       post '/api/v1/machines/steps',
         request,
         'x-MachineId' => job_id
-      
+
       expect(last_response.status).to eq(200)
       expect(last_request.params['name']).to eq(request[:stepStack].last)
     end
 
     it 'rewrites test case to classname' do
-      request = { 
+      request = {
         stepStack: ['test_case_is_second_last','test_step_is_last'],
         result: 'a big success'
       }
@@ -142,7 +142,7 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
       post '/api/v1/machines/steps',
         request,
         'x-MachineId' => job_id
-      
+
       expect(last_request.params['classname']).to eq(request[:stepStack][-2])
     end
 
