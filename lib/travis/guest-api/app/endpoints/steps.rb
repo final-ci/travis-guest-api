@@ -8,22 +8,37 @@ class Travis::GuestApi::App::Endpoints
     end
 
     post '/steps' do
-      halt 422, {
-        error: 'Keys name, classname are mandatory!'
-      }.to_json unless params['name'] && params['classname']
-      params['uuid'] ||= SecureRandom.uuid
-      sanitized_payload = params.slice(
-        'uuid',
-        'name',
-        'position',
-        'classname',
-        'class_position',
-        'result',
-        'duration',
-        'test_data')
-      @reporter.send_tresult(@job_id, sanitized_payload)
-      Travis::GuestApi.cache.set(@job_id, params['uuid'], sanitized_payload)
-      sanitized_payload.to_json
+      steps = env['rack.parser.result']
+      steps = [ params ] unless (Array === env['rack.parser.result'])
+
+      steps.map! do |step|
+
+        halt 422, {
+          error: 'Keys name, classname are mandatory!'
+        }.to_json unless !step.nil? && step['name'] && step['classname']
+        halt 422, {
+          error: 'UUID cannot be set!'
+        } if step['uuid']
+
+        step['uuid'] = SecureRandom.uuid
+        step.slice(
+          'uuid',
+          'name',
+          'position',
+          'classname',
+          'class_position',
+          'result',
+          'duration',
+          'test_data'
+        )
+      end
+
+      @reporter.send_tresult(@job_id, steps)
+      steps.each do |step|
+        Travis::GuestApi.cache.set(@job_id, step['uuid'], step)
+      end
+      steps = steps.first if !(Array === env['rack.parser.result'])
+      steps.to_json
     end
 
     get '/steps/:uuid' do
@@ -32,20 +47,45 @@ class Travis::GuestApi::App::Endpoints
       cached_step.to_json
     end
 
-    put '/steps/:uuid' do
-      halt 403, {
-        error: 'Properties "name" and "classname" are read-only.'
-      }.to_json if params['name'] || params['classname']
-      sanitized_payload = params.slice(
-        'uuid',
-        'result',
-        'duration',
-        'test_data')
-      cached_step = Travis::GuestApi.cache.get(@job_id, sanitized_payload['uuid'])
-      halt 403, error: 'Requested step could not be found.' unless cached_step
-      @reporter.send_tresult_update(@job_id, sanitized_payload)
-      cached_step = Travis::GuestApi.cache.set(@job_id, sanitized_payload['uuid'], sanitized_payload)
-      cached_step.to_json
+    # Updates step result
+    # it sends updated step_result to the reported (e.g. to the AMQP queue)
+    #
+    # the request could be Hash or Array.
+    # Array is used for update several test steps (bulk update).
+    # In case of bulk update UUIDs has to be specified within each items
+    # otherwise UUID should be specified in the route
+    #
+    put '/steps/?:uuid?' do
+      steps = env['rack.parser.result']
+      steps = [ params ] unless (Array === env['rack.parser.result'])
+
+      steps.map! do |step|
+        halt 403, {
+          error: 'Properties name, position, classname, class_position are read-only!'
+        }.to_json if step['name'] || step['classname'] || step['position'] || step['class_position']
+        halt 422, {
+          error: 'UUID is mandatory!'
+        }.to_json unless step['uuid']
+
+        step.slice(
+          'uuid',
+          'result',
+          'duration',
+          'test_data'
+        )
+      end
+
+      steps.each do |step|
+        cached_step = Travis::GuestApi.cache.get(@job_id, step['uuid'])
+        halt 404, error: 'Requested step could not be found.' unless cached_step
+      end
+
+      @reporter.send_tresult_update(@job_id, steps)
+      steps.map! do |step|
+        Travis::GuestApi.cache.set(@job_id, step['uuid'], step)
+      end
+      steps = steps.first if !(Array === env['rack.parser.result'])
+      steps.to_json
     end
   end
 end
