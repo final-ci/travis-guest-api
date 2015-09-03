@@ -35,7 +35,7 @@ module Travis::GuestAPI
         @cache[job_id] ||= {}
         @cache[job_id][:last_time_used] = Time.now
         @cache[job_id][step_uuid] ||= {}
-        @cache[job_id][step_uuid].update(result)
+        @cache[job_id][step_uuid].deep_merge!(result)
       end
 
       @cache[job_id][step_uuid]

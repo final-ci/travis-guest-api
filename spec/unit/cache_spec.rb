@@ -20,6 +20,24 @@ describe Travis::GuestAPI::Cache do
       expect(cache.get job_id, test_uuid).to eq result
     end
 
+    it 'performs recusive update' do
+      job_id = 42
+      cache.set job_id, test_uuid, { test_data: { v1: 1 } }
+      cache.set job_id, test_uuid, { test_data: { v2: 2 } }
+      expect(cache.get job_id, test_uuid).to eq (
+        { test_data: { v1: 1, v2: 2 } }
+      )
+    end
+
+    it 'returns cached value' do
+      job_id = 42
+      cache.set job_id, test_uuid, { test_data: { v1: 1 } }
+      res = cache.set job_id, test_uuid, { test_data: { v2: 2 } }
+      expect(res).to eq (
+        { test_data: { v1: 1, v2: 2 } }
+      )
+    end
+
     it 'throws when result is not a hash' do
       expect do
         cache.set 42, test_uuid, 'not a hash'
