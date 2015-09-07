@@ -13,7 +13,7 @@ GIT
 
 GIT
   remote: git://github.com/lksv/rack-parser.git
-  revision: 064b70b0dce834c7023433d6e1e5f66af5b1eb7c
+  revision: 706ae38a8e8205577a3fb320e1bec9b8fcc1259c
   branch: fix_json_array
   specs:
     rack-parser (0.6.1)
