@@ -33,7 +33,11 @@ module Travis
           warn "trying to publish '#{data}' to closed channel for '#{event}' event"
           return
         end
-        data = data.merge(uuid: Travis.uuid)
+        if Array === data
+          data.each { |d| d.merge(uuid: Travis.uuid) }
+        else
+          data = data.merge(uuid: Travis.uuid)
+        end
         options = {
           properties: { type: event },
         }
