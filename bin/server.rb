@@ -5,8 +5,8 @@ require 'travis/guest-api/reporter'
 require 'travis/support/amqp'
 
 $stdout.sync = true
-$stderr.sync = true
 
+$stderr.sync = true
 def handle_payload(payload)
   puts "Got payload: #{payload.inspect}"
   case payload[:event]
@@ -18,7 +18,8 @@ def handle_payload(payload)
 end
 
 options = {
-  Port: ENV['GUEST_API_PORT'] || 9292
+  Port: ENV['GUEST_API_PORT'] || 9292,
+  Threads: ENV['GUEST_API_THREADS'] || '0:16'
 }
 reporter = Travis::GuestApi::Reporter.new(
   'standalone-reporter',
