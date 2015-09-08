@@ -10,8 +10,8 @@ module Travis::GuestApi
       before /^(?!\/$|\/uptime)/ do
         if env['job_id'] && params['job_id'] && (env['job_id'] != params['job_id'].to_i)
           halt 422, {
-            error: 'Job_id specified both on startup and'\
-                   'in the request but they do not match!'
+            error: 'Job_id specified both on startup and '\
+                   'in the request but they do not match!!!'
           }.to_json
         end
         @job_id = env['job_id'] || params['job_id'].to_i

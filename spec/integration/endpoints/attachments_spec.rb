@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'travis/guest_api'
+require 'travis/guest-api'
 
 require 'ostruct'
 require 'travis/guest-api/app'

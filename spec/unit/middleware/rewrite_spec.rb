@@ -27,8 +27,8 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
   context "server is run with job_id 42" do
     let(:job_id) { 42 }
     it 'responds with 422 on job_id mismatch' do
-      response = get "/api/v1/jobs/666/uptime"
-      expect(response.status).to eq(422)
+      get "/api/v1/jobs/666/uptime"
+      expect(last_response.status).to eq(422)
     end
   end
 
@@ -37,11 +37,12 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
     it 'rewrites logs route' do
       expected_message = 'test message'
       expect(reporter).to receive(:send_log).with(job_id, expected_message)
-      response = post "/api/v1/machines/logs/message",
+      post "/api/v1/machines/logs/message",
         { messageText: expected_message },
-        'x-MachineId' => job_id
+        'HTTP_JOBID' => job_id
       expect(last_request.form_data?).to be true
-      expect(response.status).to eq(200)
+      p last_response.body
+      expect(last_response.status).to eq(200)
     end
 
     it 'responds with 422 if MachineId not specified' do
@@ -97,7 +98,7 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
 
       post '/api/v1/machines/steps',
         request,
-        'x-MachineId' => job_id
+        'HTTP_JOBID' => job_id
 
       expect(last_response.status).to eq(422)
     end
@@ -110,7 +111,7 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
 
       post '/api/v1/machines/steps',
         request,
-        'x-MachineId' => job_id
+        'HTTP_JOBID' => job_id
 
       expect(last_response.status).to eq(422)
     end
@@ -125,7 +126,7 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
 
       post '/api/v1/machines/steps',
         request,
-        'x-MachineId' => job_id
+        'HTTP_JOBID' => job_id
 
       expect(last_response.status).to eq(200)
       expect(last_request.params['name']).to eq(request[:stepStack].last)
@@ -141,7 +142,7 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
 
       post '/api/v1/machines/steps',
         request,
-        'x-MachineId' => job_id
+        'HTTP_JOBID' => job_id
 
       expect(last_request.params['classname']).to eq(request[:stepStack][-2])
     end

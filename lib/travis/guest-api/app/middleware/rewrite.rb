@@ -35,27 +35,35 @@ class Travis::GuestApi::App::Middleware
     end
 
     def rewrite_job_id_part(job_id)
-      if env['job_id'] && (env['job_id'] != job_id)
+      if env['job_id'] && (env['job_id'] != job_id.to_i)
         halt 422, {
-          error: 'Job_id specified both on startup and'\
+          error: 'Job_id specified both on startup and '\
                  'in the request but they do not match!'
         }.to_json
       end
 
       env['PATH_INFO'].sub!(JOB_ID_PATTERN, V2_PREFIX)
-      env['job_id'] = job_id
+      @job_id = env['job_id'] = job_id
     end
 
-    def rewrite_x_machine_id_v1
-      unless env['x-MachineId']
-        halt 422, { error: 'x-MachineId must be specified in form data. '}.to_json
+    def rewrite_job_id_v1
+      unless env['HTTP_JOBID']
+        halt 422, { error: 'JobId header must be specified in form data.'}.to_json
       end
-      request.update_param 'job_id', env.delete('x-MachineId')
+
+      job_id = Integer(env.delete('HTTP_JOBID'))
+      if env['job_id'] && (env['job_id'] != job_id)
+        halt 422, {
+          error: 'Job_id specified both on startup and '\
+                 'in the request but they do not match!'
+        }.to_json
+      end
+      request.update_param 'job_id', job_id
     end
 
     def rewrite_logs_v1
       env['PATH_INFO'] = "#{V2_PREFIX}/logs"
-      rewrite_x_machine_id_v1
+      rewrite_job_id_v1
       request.update_param 'message', request.delete_param('messageText')
     end
 
@@ -69,14 +77,14 @@ class Travis::GuestApi::App::Middleware
 
     def rewrite_steps_v1
       env['PATH_INFO'] = "#{V2_PREFIX}/steps"
-      rewrite_x_machine_id_v1
+      rewrite_job_id_v1
 
-      unless params['stepStack'] and 
+      unless params['stepStack'] and
              params['stepStack'].is_a?(Array) and
              params['stepStack'].last
         halt 422,
         { error: 'Property "stepStack" must be an array '\
-                 'containing step name as last element.' }.to_json 
+                 'containing step name as last element.' }.to_json
       end
 
       request.update_param 'name', params[:stepStack].last

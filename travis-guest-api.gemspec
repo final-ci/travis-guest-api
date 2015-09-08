@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 $:.unshift File.expand_path('../lib', __FILE__)
-require 'travis_guest_api/version'
+require 'travis-guest-api/version'
 
 Gem::Specification.new do |s|
   s.name         = "travis-guest-api"
