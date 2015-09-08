@@ -1,3 +1,5 @@
+#!/usr/bin/ruby
+
 $: << './lib'
 require 'bundler/setup'
 require 'travis/guest-api/server'
@@ -5,8 +7,8 @@ require 'travis/guest-api/reporter'
 require 'travis/support/amqp'
 
 $stdout.sync = true
-
 $stderr.sync = true
+
 def handle_payload(payload)
   puts "Got payload: #{payload.inspect}"
   case payload[:event]
@@ -29,4 +31,5 @@ reporter = Travis::GuestApi::Reporter.new(
 )
 
 server = Travis::GuestApi::Server.new(nil, reporter, options, &method(:handle_payload)).start
+Travis.logger.info "Server started"
 server.server_thread.join

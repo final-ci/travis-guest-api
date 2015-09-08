@@ -1,0 +1,32 @@
+sentry: &sentry
+  dsn: https://tok:en@app.getsentry.com/app_id
+
+production:
+  amqp:
+    host: messaging.megacorp.local
+    port: 5672
+    username: cute.bunny
+    password: t0p.s3kr3t
+    vhost: travisci.production
+  ssl:
+    ca_file: /usr/lib/ssl/certs/ca-certificates.crt
+  sentry:
+    <<: *sentry
+
+development:
+  log_level: :debug
+  amqp:
+    host: localhost
+    port: 5672
+    username: travisci_worker
+    password: travisci_worker_password
+    vhost: travisci.development
+
+test:
+  amqp:
+    host: localhost
+    port: 5672
+    username: travisci_worker
+    password: travisci_worker_password
+    vhost: travisci.development
+
