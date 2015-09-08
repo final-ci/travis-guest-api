@@ -5,6 +5,7 @@ require 'rack/parser'
 require 'multi_json'
 
 require 'travis/guest-api/app/middleware/rewrite'
+require 'travis/guest-api/app/middleware/logging'
 require 'travis/guest-api/app/endpoints/steps'
 require 'travis/guest-api/app/endpoints/logs'
 require 'travis/guest-api/app/endpoints/started'
@@ -32,7 +33,9 @@ module Travis::GuestApi
       @msg_handler = block
 
       @app = Rack::Builder.app do
+        use Rack::CommonLogger
         use Rack::Parser, :parsers => { 'application/json' => Proc.new { |body| ::MultiJson.decode body } }
+        use Travis::GuestApi::App::Middleware::Logging
         use Travis::GuestApi::App::Middleware::Rewrite
         map '/api/v2' do
           use Travis::GuestApi::App::Endpoints::Logs

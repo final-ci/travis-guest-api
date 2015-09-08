@@ -6,11 +6,6 @@ module Travis::GuestApi
   class App
     class Base < Sinatra::Base
 
-      before do
-        env['rack.logger'] = Travis.logger
-        env['rack.errors'] = Travis.logger.instance_variable_get(:@logdev).dev rescue nil
-      end
-
       # / and /uptime does not need job_id
       before /^(?!\/$|\/uptime)/ do
         if env['job_id'] && params['job_id'] && (env['job_id'] != params['job_id'].to_i)
