@@ -15,11 +15,11 @@ module Travis::GuestApi
     let(:reporter) { double(:reporter) }
     let(:callback) { ->(x) { } }
 
-    describe 'POST /finished' do
-      it 'call callback with event: finished' do
-        expect(callback).to receive(:call).with(job_id: 1, event: 'finished')
+    describe 'POST /started' do
+      it 'call callback with event: started' do
+        expect(callback).to receive(:call).with(job_id: 1, event: 'started')
 
-        post '/api/v2/finished', {}.to_json, "CONTENT_TYPE" => "application/json"
+        post '/api/v2/started', {}.to_json, "CONTENT_TYPE" => "application/json"
         expect(last_response.status).to eq(200)
       end
     end

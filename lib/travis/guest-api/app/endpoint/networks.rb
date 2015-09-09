@@ -1,7 +1,7 @@
-require 'travis/guest-api/app/base'
+require 'travis/guest-api/app/endpoint'
 
-class Travis::GuestApi::App::Endpoints
-  class Networks < Travis::GuestApi::App::Base
+class Travis::GuestApi::App::Endpoint
+  class Networks < Travis::GuestApi::App::Endpoint
 
     post '/networks' do
        halt 501, { error: 'Tell Lukas to implement it.'}.to_json

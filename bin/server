@@ -10,12 +10,13 @@ $stdout.sync = true
 $stderr.sync = true
 
 def handle_payload(payload)
-  puts "Got payload: #{payload.inspect}"
+  job_id = payload[:job_id]
   case payload[:event]
   when 'finished'
-    halt 501, { error: 'all your base are belong to us' }.to_json
+    Travis::GuestApi.cache.delete(job_id)
+    Travis.logger.info "Finished job_id=#{job_id}"
   when 'started'
-    halt 501, { error: 'all your base are belong to us' }.to_json
+    Travis.logger.info "Started job_id=#{job_id}"
   end
 end
 

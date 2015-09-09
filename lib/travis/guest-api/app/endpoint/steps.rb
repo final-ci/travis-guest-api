@@ -1,7 +1,7 @@
-require 'travis/guest-api/app/base'
+require 'travis/guest-api/app/endpoint'
 
-class Travis::GuestApi::App::Endpoints
-  class Steps < Travis::GuestApi::App::Base
+class Travis::GuestApi::App::Endpoint
+  class Steps < Travis::GuestApi::App::Endpoint
     before do
       @job_id = env['job_id']
       @reporter = env['reporter']

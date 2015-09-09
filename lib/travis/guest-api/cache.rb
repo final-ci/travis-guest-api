@@ -47,6 +47,10 @@ module Travis::GuestAPI
       @cache[job_id][step_uuid]
     end
 
+    def exists?(job_id)
+      return !!@cache[job_id]
+    end
+
     def delete(job_id)
       @mutex.synchronize do
         Travis.logger.info "Deleting #{job_id} from cache"

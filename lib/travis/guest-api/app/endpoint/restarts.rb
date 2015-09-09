@@ -1,7 +1,7 @@
-require 'travis/guest-api/app/base'
+require 'travis/guest-api/app/endpoint'
 
-class Travis::GuestApi::App::Endpoints
-  class Restarts < Travis::GuestApi::App::Base
+class Travis::GuestApi::App::Endpoint
+  class Restarts < Travis::GuestApi::App::Endpoint
 
     post '/restarts' do
       halt 501, { error: 'all your base are belong to us' }.to_json

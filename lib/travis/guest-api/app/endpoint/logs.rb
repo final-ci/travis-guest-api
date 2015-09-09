@@ -1,7 +1,7 @@
-require 'travis/guest-api/app/base'
+require 'travis/guest-api/app/endpoint'
 
-class Travis::GuestApi::App::Endpoints
-  class Logs < Travis::GuestApi::App::Base
+class Travis::GuestApi::App::Endpoint
+  class Logs < Travis::GuestApi::App::Endpoint
 
     before do
       @reporter = env['reporter']

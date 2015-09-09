@@ -1,8 +1,8 @@
 require 'travis/guest-api'
-require 'travis/guest-api/app/base'
+require 'travis/guest-api/app/endpoint'
 
-class Travis::GuestApi::App::Endpoints
-  class Attachments < Travis::GuestApi::App::Base
+class Travis::GuestApi::App::Endpoint
+  class Attachments < Travis::GuestApi::App::Endpoint
 
     post '/attachments' do
       halt 422, { error: 'No file uploaded.'}.to_json unless params[:file]

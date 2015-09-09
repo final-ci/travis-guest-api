@@ -1,22 +1,9 @@
 require 'travis/guest-api/app'
 require 'sinatra/base'
-require "sinatra/multi_route"
 
 module Travis::GuestApi
   class App
     class Base < Sinatra::Base
-
-      # / and /uptime does not need job_id
-      before /^(?!\/$|\/uptime)/ do
-        if env['job_id'] && params['job_id'] && (env['job_id'] != params['job_id'].to_i)
-          halt 422, {
-            error: 'Job_id specified both on startup and '\
-                   'in the request but they do not match!!!'
-          }.to_json
-        end
-        @job_id = env['job_id'] || params['job_id'].to_i
-        halt 422, { error: 'Job ID must be specified.'} unless @job_id
-      end
 
       after do
         content_type :json unless content_type

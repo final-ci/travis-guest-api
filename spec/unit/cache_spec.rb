@@ -76,4 +76,15 @@ describe Travis::GuestAPI::Cache do
       expect(cache.get job_id, test_uuid).to be_nil
     end
   end
+
+  describe "#exists" do
+    it "returns false if job is not cached" do
+      expect(cache.exists?(12345)).to be false
+    end
+
+    it "return true if job is cached" do
+      cache.set 123, test_uuid, {}
+      expect(cache.exists?(123)).to be true
+    end
+  end
 end

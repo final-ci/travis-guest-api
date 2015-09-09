@@ -1,7 +1,7 @@
-require 'travis/guest-api/app/base'
+require 'travis/guest-api/app/endpoint'
 
-class Travis::GuestApi::App::Endpoints
-  class Snapshots < Travis::GuestApi::App::Base
+class Travis::GuestApi::App::Endpoint
+  class Snapshots < Travis::GuestApi::App::Endpoint
 
     get '/snapshots' do
       halt 501, { error: 'all your base are belong to us' }.to_json

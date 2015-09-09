@@ -6,16 +6,16 @@ require 'multi_json'
 
 require 'travis/guest-api/app/middleware/rewrite'
 require 'travis/guest-api/app/middleware/logging'
-require 'travis/guest-api/app/endpoints/steps'
-require 'travis/guest-api/app/endpoints/logs'
-require 'travis/guest-api/app/endpoints/started'
-require 'travis/guest-api/app/endpoints/finished'
-require 'travis/guest-api/app/endpoints/home'
-require 'travis/guest-api/app/endpoints/uptime'
-require 'travis/guest-api/app/endpoints/networks'
-require 'travis/guest-api/app/endpoints/attachments'
-require 'travis/guest-api/app/endpoints/restarts'
-require 'travis/guest-api/app/endpoints/snapshots'
+require 'travis/guest-api/app/endpoint/steps'
+require 'travis/guest-api/app/endpoint/logs'
+require 'travis/guest-api/app/endpoint/started'
+require 'travis/guest-api/app/endpoint/finished'
+require 'travis/guest-api/app/endpoint/home'
+require 'travis/guest-api/app/endpoint/uptime'
+require 'travis/guest-api/app/endpoint/networks'
+require 'travis/guest-api/app/endpoint/attachments'
+require 'travis/guest-api/app/endpoint/restarts'
+require 'travis/guest-api/app/endpoint/snapshots'
 
 #require 'travis/worker'
 #require 'travis/worker/reporter'
@@ -38,16 +38,16 @@ module Travis::GuestApi
         use Travis::GuestApi::App::Middleware::Logging
         use Travis::GuestApi::App::Middleware::Rewrite
         map '/api/v2' do
-          use Travis::GuestApi::App::Endpoints::Logs
-          use Travis::GuestApi::App::Endpoints::Steps
-          use Travis::GuestApi::App::Endpoints::Started
-          use Travis::GuestApi::App::Endpoints::Finished
-          use Travis::GuestApi::App::Endpoints::Uptime
-          use Travis::GuestApi::App::Endpoints::Networks
-          use Travis::GuestApi::App::Endpoints::Attachments
-          use Travis::GuestApi::App::Endpoints::Restarts
-          use Travis::GuestApi::App::Endpoints::Snapshots
-          run Travis::GuestApi::App::Endpoints::Home.new
+          use Travis::GuestApi::App::Endpoint::Logs
+          use Travis::GuestApi::App::Endpoint::Steps
+          use Travis::GuestApi::App::Endpoint::Started
+          use Travis::GuestApi::App::Endpoint::Finished
+          use Travis::GuestApi::App::Endpoint::Uptime
+          use Travis::GuestApi::App::Endpoint::Networks
+          use Travis::GuestApi::App::Endpoint::Attachments
+          use Travis::GuestApi::App::Endpoint::Restarts
+          use Travis::GuestApi::App::Endpoint::Snapshots
+          run Travis::GuestApi::App::Endpoint::Home.new
         end
       end
     end

@@ -12,10 +12,6 @@ class Travis::GuestApi::App::Middleware
     V2_PREFIX = '/api/v2'
     JOB_ID_PATTERN = %r{/api/v\d+/jobs/(\d+)}
 
-    before JOB_ID_PATTERN do |job_id|
-      rewrite_job_id_part(job_id.to_i)
-    end
-
     namespace V1_PREFIX do
       before '/machines/logs/message' do
         rewrite_logs_v1
@@ -42,11 +38,8 @@ class Travis::GuestApi::App::Middleware
       end
     end
 
-    def rewrite_notifications_v1
-      case params['status']
-      when 'finished'
-      when 'started'
-      end
+    before JOB_ID_PATTERN do |job_id|
+      rewrite_job_id_part(job_id.to_i)
     end
 
     def rewrite_job_id_part(job_id)
@@ -112,5 +105,21 @@ class Travis::GuestApi::App::Middleware
       rewrite_job_id_v1
       request.delete_param(:stepStack)
     end
+
+    def rewrite_notifications_v1
+      case params['status']
+      when 'finished'
+        env['REQUEST_METHOD'] = 'POST'
+        env['PATH_INFO'] = "#{V2_PREFIX}/finished"
+      when 'started'
+        env['REQUEST_METHOD'] = 'POST'
+        env['PATH_INFO'] = "#{V2_PREFIX}/started"
+      else
+        halt 501, "Status=#{params['status'].inspect} is not implemented"
+      end
+      rewrite_job_id_v1
+    end
+
+
   end
 end
