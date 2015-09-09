@@ -29,8 +29,23 @@ class Travis::GuestApi::App::Middleware
         rewrite_networks_v1
       end
 
-      before '/machines/steps' do
-        rewrite_steps_v1
+      before '/machines/steps/:uuid', method: :put do
+        rewrite_put_steps_v1
+      end
+
+      before '/machines/steps', method: :post do
+        rewrite_post_steps_v1
+      end
+
+      before '/machines/notifications' do
+        rewrite_notifications_v1
+      end
+    end
+
+    def rewrite_notifications_v1
+      case params['status']
+      when 'finished'
+      when 'started'
       end
     end
 
@@ -75,7 +90,7 @@ class Travis::GuestApi::App::Middleware
       env['PATH_INFO'] = "#{V2_PREFIX}/networks"
     end
 
-    def rewrite_steps_v1
+    def rewrite_post_steps_v1
       env['PATH_INFO'] = "#{V2_PREFIX}/steps"
       rewrite_job_id_v1
 
@@ -92,5 +107,10 @@ class Travis::GuestApi::App::Middleware
       request.delete_param(:stepStack)
     end
 
+    def rewrite_put_steps_v1
+      env['PATH_INFO'] = "#{V2_PREFIX}/steps/#{params[:uuid]}"
+      rewrite_job_id_v1
+      request.delete_param(:stepStack)
+    end
   end
 end

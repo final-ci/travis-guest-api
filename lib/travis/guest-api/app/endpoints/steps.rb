@@ -18,7 +18,7 @@ class Travis::GuestApi::App::Endpoints
         }.to_json unless !step.nil? && step['name'] && step['classname']
         halt 422, {
           error: 'UUID cannot be set!'
-        } if step['uuid']
+        }.to_json if step['uuid']
 
         step['uuid'] = SecureRandom.uuid
         step.slice(
@@ -43,7 +43,7 @@ class Travis::GuestApi::App::Endpoints
 
     get '/steps/:uuid' do
       cached_step = Travis::GuestApi.cache.get(@job_id, params[:uuid])
-      halt 403, error: 'Requested step could not be found.' unless cached_step
+      halt 403, { error: 'Requested step could not be found.' }.to_json unless cached_step
       cached_step.to_json
     end
 
@@ -77,7 +77,8 @@ class Travis::GuestApi::App::Endpoints
 
       steps.each do |step|
         cached_step = Travis::GuestApi.cache.get(@job_id, step['uuid'])
-        halt 404, error: 'Requested step could not be found.' unless cached_step
+        #halt 404, { error: 'Requested step could not be found.' }.to_json unless cached_step
+        Travis.logger.error("Step UUID=#{step['uuid']} not found") unless cached_step
       end
 
       @reporter.send_tresult_update(@job_id, steps)

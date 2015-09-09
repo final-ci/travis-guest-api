@@ -41,7 +41,6 @@ describe Travis::GuestApi::App::Middleware::Rewrite do
         { messageText: expected_message },
         'HTTP_JOBID' => job_id
       expect(last_request.form_data?).to be true
-      p last_response.body
       expect(last_response.status).to eq(200)
     end
 
