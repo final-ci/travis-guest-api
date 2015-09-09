@@ -9,6 +9,23 @@ require 'travis/support/amqp'
 $stdout.sync = true
 $stderr.sync = true
 
+def declare_queues
+  reporting_channel = Travis::Amqp.connection.create_channel
+  builds = reporting_channel.queue("reporting.jobs.builds", :durable => true)
+  logs = reporting_channel.queue("reporting.jobs.logs", :durable => true)
+  test_results = reporting_channel.queue("reporting.jobs.test_results", :durable => true)
+
+  exchange = Travis::Amqp.connection.create_channel.exchange('reporting', type: 'topic', durable: true)
+  builds.bind('reporting', routing_key: 'reporting.jobs.builds')
+  logs.bind('reporting', routing_key: 'reporting.jobs.logs')
+  test_results.bind('reporting', routing_key: 'reporting.jobs.test_results')
+end
+
+
+Travis::Amqp.config = Travis.config.amqp
+Travis::Amqp.connect
+declare_queues
+
 def handle_payload(payload)
   job_id = payload[:job_id]
   case payload[:event]
@@ -19,6 +36,7 @@ def handle_payload(payload)
     Travis.logger.info "Started job_id=#{job_id}"
   end
 end
+
 
 options = {
   Port: ENV['GUEST_API_PORT'] || 9292,
