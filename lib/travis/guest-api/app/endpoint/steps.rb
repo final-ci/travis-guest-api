@@ -21,8 +21,11 @@ class Travis::GuestApi::App::Endpoint
         }.to_json if step['uuid']
 
         step['uuid'] = SecureRandom.uuid
+        step['job_id'] = @job_id
+
         step.slice(
           'uuid',
+          'job_id',
           'name',
           'position',
           'classname',
