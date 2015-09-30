@@ -23,7 +23,7 @@ class Travis::GuestApi::App::Endpoint
         step['uuid'] = SecureRandom.uuid
         step['job_id'] = @job_id
 
-        step.slice(
+        res = step.slice(
           'uuid',
           'job_id',
           'name',
@@ -34,6 +34,8 @@ class Travis::GuestApi::App::Endpoint
           'duration',
           'test_data'
         )
+        res['number'] = 0
+        res
       end
 
       @reporter.send_tresult(@job_id, steps)
@@ -82,6 +84,9 @@ class Travis::GuestApi::App::Endpoint
         cached_step = Travis::GuestApi.cache.get(@job_id, step['uuid'])
         #halt 404, { error: 'Requested step could not be found.' }.to_json unless cached_step
         Travis.logger.error("Step UUID=#{step['uuid']} not found") unless cached_step
+        step.reverse_merge(cached_step || {})
+        step['number'] ||= 0
+        step['number'] += 1
       end
 
       @reporter.send_tresult_update(@job_id, steps)

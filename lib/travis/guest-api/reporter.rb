@@ -79,6 +79,10 @@ module Travis
         notify('job:test:test_result', payload)
       end
 
+      def send_last_tresult(job_id)
+        notify('job:test:test_result', { job_id: job_id, final: true }
+      end
+
       def notify_job_received(job_id)
         notify('job:test:receive', id: job_id, state: 'received', received_at: Time.now.utc, worker: Travis::GuestApi.config.hostname)
       end

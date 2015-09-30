@@ -50,12 +50,16 @@ module Travis::GuestApi
             e.delete 'job_id'
             expect(arg[0]['uuid']).to be_a(String)
             e['uuid'] = arg[0]['uuid']
+            e['number'] = 0
+            e['job_id'] = job_id
             expect(arg[0]).to eq(e)
           }
           expect(reporter).to receive(:send_tresult) { |job_id, arg|
             e = testcase_with_data.dup
             e.delete 'job_id'
             arg[0].delete 'uuid'
+            e['number'] = 0
+            e['job_id'] = job_id
             expect(arg[0]).to eq(e)
           }
 
@@ -129,6 +133,8 @@ module Travis::GuestApi
           expected_testcase = testcase.dup
           expected_testcase.delete 'job_id'
           expected_testcase['uuid'] = step_uuid
+          expected_testcase['number'] = 0
+          expected_testcase['job_id'] = 1
           expect(response_body).to eq expected_testcase
         end
 
@@ -150,6 +156,8 @@ module Travis::GuestApi
           expected_testcase.delete 'job_id'
           expected_testcase['result'] = update_request[:result]
           expected_testcase['uuid'] = step_uuid
+          expected_testcase['job_id'] = 1
+          expected_testcase['number'] = 1
           expect(last_response.status).to eq 200
           expect(JSON.parse last_response.body).to eq expected_testcase
         end
@@ -196,10 +204,14 @@ module Travis::GuestApi
 
             expect(reporter).to receive(:send_tresult_update) do |job_id, arg|
               expect(arg.count).to eq 2
+
               expect(arg[0]['uuid']).to eq step_uuid1
               expect(arg[0]['result']).to eq 'success'
+              expect(arg[0]['number']).to eq 1
+
               expect(arg[1]['uuid']).to eq step_uuid2
               expect(arg[1]['result']).to eq 'failed'
+              expect(arg[1]['number']).to eq 1
             end
 
             put "/api/v2/steps",
@@ -208,8 +220,10 @@ module Travis::GuestApi
 
             expect(last_response.status).to eq 200
             expect(JSON.parse last_response.body).to eq [
-              testcase1.update(update_request[0]),
-              testcase2.update(update_request[1])
+              testcase1.update(update_request[0]).update(
+                'job_id' => 1, 'number' => 1),
+              testcase2.update(update_request[1]).update(
+                'job_id' => 1, 'number' => 1)
             ]
           end
         end
