@@ -40,6 +40,7 @@ class Travis::GuestApi::App::Endpoint
 
       @reporter.send_tresult(@job_id, steps)
       steps.each do |step|
+        Travis.logger.debug "Setting step #{@job_id.inspect}, #{step['uuid'].inspect} to #{step.inspect}"
         Travis::GuestApi.cache.set(@job_id, step['uuid'], step)
       end
       steps = steps.first if !(Array === env['rack.parser.result'])
@@ -80,13 +81,20 @@ class Travis::GuestApi::App::Endpoint
         )
       end
 
+      not_found_uids = []
       steps.each do |step|
         cached_step = Travis::GuestApi.cache.get(@job_id, step['uuid'])
-        Travis.logger.error("Step UUID=#{step['uuid']} not found") unless cached_step
-        halt 404, { error: 'Requested step could not be found.' }.to_json unless cached_step
+        Travis.logger.debug "Looking for #{@job_id.inspect},#{step['uuid'].inspect} and got: #{cached_step.inspect}"
+        not_found_uids << step['uuid'] unless cached_step
         step.reverse_merge(cached_step || { 'job_id' => @job_id })
         step['number'] ||= 0
         step['number'] += 1
+      end
+
+      unless not_found_uids.empty?
+        msg = "Step(s) could not be found, UUIDs=#{not_found_uids.join(',')}"
+        Travis.logger.error msg
+        halt 404, { error: msg }.to_json
       end
 
       @reporter.send_tresult_update(@job_id, steps)

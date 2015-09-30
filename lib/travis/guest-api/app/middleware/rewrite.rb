@@ -59,13 +59,17 @@ class Travis::GuestApi::App::Middleware
         halt 422, { error: 'JobId header must be specified in form data.'}.to_json
       end
 
-      job_id = Integer(env.delete('HTTP_JOBID'))
+      job_id = env.delete('HTTP_JOBID').to_i
+
+      halt 422, { error: 'JOB_ID has to be specified in header' }.to_json if job_id == 0
+
       if env['job_id'] && (env['job_id'] != job_id)
         halt 422, {
           error: 'Job_id specified both on startup and '\
                  'in the request but they do not match!'
         }.to_json
       end
+      @job_id = env['job_id'] = job_id
       request.update_param 'job_id', job_id
     end
 
