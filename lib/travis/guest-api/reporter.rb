@@ -34,7 +34,7 @@ module Travis
           return
         end
         if Array === data
-          data.each { |d| d.merge(uuid: Travis.uuid) }
+          data.each { |d| d.merge!(uuid: Travis.uuid) }
         else
           data = data.merge(uuid: Travis.uuid)
         end
@@ -72,11 +72,11 @@ module Travis
       end
 
       def send_tresult(job_id, payload)
-        notify('job:test:test_result', payload)
+        notify('job:test:test_result', { steps: payload })
       end
 
       def send_tresult_update(job_id, payload)
-        notify('job:test:test_result', payload)
+        notify('job:test:test_result', { steps: payload })
       end
 
       def send_last_tresult(job_id)

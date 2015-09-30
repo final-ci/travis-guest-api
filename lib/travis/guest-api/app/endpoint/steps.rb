@@ -82,9 +82,9 @@ class Travis::GuestApi::App::Endpoint
 
       steps.each do |step|
         cached_step = Travis::GuestApi.cache.get(@job_id, step['uuid'])
-        #halt 404, { error: 'Requested step could not be found.' }.to_json unless cached_step
         Travis.logger.error("Step UUID=#{step['uuid']} not found") unless cached_step
-        step.reverse_merge(cached_step || {})
+        halt 404, { error: 'Requested step could not be found.' }.to_json unless cached_step
+        step.reverse_merge(cached_step || { 'job_id' => @job_id })
         step['number'] ||= 0
         step['number'] += 1
       end
