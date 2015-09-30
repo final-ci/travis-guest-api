@@ -90,7 +90,7 @@ module Travis::GuestApi
           expect(JSON.parse last_response.body).to include('uuid')
         end
 
-        context 'bulk update' do
+        context 'bulk create' do
           it 'sends several record to the reporter' do
             request = [
               testcase,
@@ -100,6 +100,9 @@ module Travis::GuestApi
               expect(arg.count).to eq(2)
               expect(job_id).to eq(testcase['job_id'])
               e = testcase.dup
+              expect(arg[0]['number']).to eq 0
+              expect(arg[1]['number']).to eq 0
+
               expect(arg[0]['uuid']).to be_a(String)
               expect(arg[1]['uuid']).to be_a(String)
 
