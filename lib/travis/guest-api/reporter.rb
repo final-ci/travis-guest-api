@@ -80,7 +80,7 @@ module Travis
       end
 
       def send_last_tresult(job_id)
-        notify('job:test:test_result', { job_id: job_id, final: true }
+        notify('job:test:test_result', { job_id: job_id, final: true })
       end
 
       def notify_job_received(job_id)

@@ -26,18 +26,6 @@ Travis::Amqp.config = Travis.config.amqp
 Travis::Amqp.connect
 declare_queues
 
-def handle_payload(payload)
-  job_id = payload[:job_id]
-  case payload[:event]
-  when 'finished'
-    Travis::GuestApi.cache.delete(job_id)
-    Travis.logger.info "Finished job_id=#{job_id}"
-  when 'started'
-    Travis.logger.info "Started job_id=#{job_id}"
-  end
-end
-
-
 options = {
   Port: ENV['GUEST_API_PORT'] || 9292,
   Threads: ENV['GUEST_API_THREADS'] || '0:16'
@@ -48,6 +36,19 @@ reporter = Travis::GuestApi::Reporter.new(
   Travis::Amqp::Publisher.jobs('logs', unique_channel: true, dont_retry: true),
   Travis::Amqp::Publisher.jobs('test_results', unique_channel: true, dont_retry: true)
 )
+
+def handle_payload(payload)
+  job_id = payload[:job_id]
+  case payload[:event]
+  when 'finished'
+    reporter.send_last_tresult(job_id)
+    Travis::GuestApi.cache.delete(job_id)
+    Travis.logger.info "Finished job_id=#{job_id}"
+  when 'started'
+    Travis.logger.info "Started job_id=#{job_id}"
+  end
+end
+
 
 server = Travis::GuestApi::Server.new(nil, reporter, options, &method(:handle_payload)).start
 Travis.logger.info "Server started"
