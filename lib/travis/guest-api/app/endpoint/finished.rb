@@ -5,10 +5,11 @@ class Travis::GuestApi::App::Endpoint
 
     before do
       @msg_handler = env['msg_handler']
+      @reporter = env['reporter']
     end
 
     post '/finished' do
-      @msg_handler.call(job_id: @job_id, event: 'finished')
+      @msg_handler.call(job_id: @job_id, event: 'finished', reporter: @reporter)
       { success: true }.to_json
     end
 

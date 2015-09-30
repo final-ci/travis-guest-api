@@ -30,6 +30,7 @@ options = {
   Port: ENV['GUEST_API_PORT'] || 9292,
   Threads: ENV['GUEST_API_THREADS'] || '0:16'
 }
+
 reporter = Travis::GuestApi::Reporter.new(
   'standalone-reporter',
   Travis::Amqp::Publisher.jobs('builds', unique_channel: true, dont_retry: true),
@@ -41,7 +42,7 @@ def handle_payload(payload)
   job_id = payload[:job_id]
   case payload[:event]
   when 'finished'
-    reporter.send_last_tresult(job_id)
+    payload[:reporter].send_last_tresult(job_id)
     Travis::GuestApi.cache.delete(job_id)
     Travis.logger.info "Finished job_id=#{job_id}"
   when 'started'
