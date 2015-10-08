@@ -10,6 +10,7 @@ require 'travis/guest-api/app/endpoint/steps'
 require 'travis/guest-api/app/endpoint/logs'
 require 'travis/guest-api/app/endpoint/started'
 require 'travis/guest-api/app/endpoint/finished'
+require 'travis/guest-api/app/endpoint/errored'
 require 'travis/guest-api/app/endpoint/home'
 require 'travis/guest-api/app/endpoint/uptime'
 require 'travis/guest-api/app/endpoint/networks'
@@ -42,6 +43,7 @@ module Travis::GuestApi
           use Travis::GuestApi::App::Endpoint::Steps
           use Travis::GuestApi::App::Endpoint::Started
           use Travis::GuestApi::App::Endpoint::Finished
+          use Travis::GuestApi::App::Endpoint::Errored
           use Travis::GuestApi::App::Endpoint::Uptime
           use Travis::GuestApi::App::Endpoint::Networks
           use Travis::GuestApi::App::Endpoint::Attachments

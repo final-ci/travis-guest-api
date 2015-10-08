@@ -47,6 +47,19 @@ module Travis::GuestAPI
       @cache[job_id][step_uuid]
     end
 
+    def get_result(job_id)
+      return 'started' unless @cache[job_id]
+      result = 'passed'
+      @cache[job_id].each do |key, step_result|
+        next if key == :last_time_used
+        if step_result['result'].to_s.downcase == 'failed'
+          result = 'failed'
+          break
+        end
+      end
+      result
+    end
+
     def exists?(job_id)
       return !!@cache[job_id]
     end

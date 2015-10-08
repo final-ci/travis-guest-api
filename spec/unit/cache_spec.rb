@@ -87,4 +87,32 @@ describe Travis::GuestAPI::Cache do
       expect(cache.exists?(123)).to be true
     end
   end
+
+  describe "#get_result" do
+    it "returns 'started' when no result set" do
+      expect(cache.get_result(123456)).to eq 'started'
+    end
+
+    it "reutrns passed when any test_step was set (event without result)" do
+      cache.set 123, test_uuid, {}
+      expect(cache.get_result(123)).to eq 'passed'
+    end
+
+    it "returns 'passed' to any result value expect 'failed'" do
+      cache.set 123, test_uuid, { 'result' => 'pending'}
+      expect(cache.get_result(123)).to eq 'passed'
+      cache.set 123, test_uuid, { 'result' => 'broken'}
+      expect(cache.get_result(123)).to eq 'passed'
+    end
+
+    it "reutrns failed when any test_step was failed" do
+      cache.set 123, SecureRandom.uuid, { 'result' => 'passed'}
+      cache.set 123, SecureRandom.uuid, { 'result' => 'failed'}
+      cache.set 123, SecureRandom.uuid, { 'result' => 'passed'}
+      expect(cache.get_result(123)).to eq 'failed'
+    end
+
+
+  end
+
 end
