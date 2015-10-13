@@ -17,7 +17,11 @@ module Travis::GuestApi
 
     describe 'POST /started' do
       it 'call callback with event: started' do
-        expect(callback).to receive(:call).with(job_id: 1, event: 'started')
+        expect(callback).to receive(:call).with(
+          job_id: 1,
+          event: 'started',
+          reporter: reporter
+        )
 
         post '/api/v2/started', {}.to_json, "CONTENT_TYPE" => "application/json"
         expect(last_response.status).to eq(200)
