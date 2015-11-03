@@ -58,7 +58,17 @@ module Travis::GuestApi
       env['job_id'] = @job_id
       env['reporter'] = @reporter
       env['msg_handler'] = @msg_handler
-      app.call(env)
+      res = app.call(env)
+
+      # NOTE: Brutal hack, this is temporary solution to just workaround
+      # oher (unnamed service) and make it working...
+      if Array === res && res.first != 200
+        Travis.logger.error "Error #{env['REQUEST_METHOD']} #{env['PATH_INFO']}, #{res.inspect}"
+        res[0] = 200
+      end
+      res
+    rescue Exception => err
+      [200, { success: false, msg: "Error happend: #{err.to_s}" }.to_json ]
     end
   end
 
