@@ -13,6 +13,11 @@ class Travis::GuestApi::App::Middleware
     JOB_ID_PATTERN = %r{/api/v\d+/jobs/(\d+)}
 
     namespace V1_PREFIX do
+
+      #before do
+      #  Travis.logger.debug ">> #{env['REQUEST_METHOD']} #{env['PATH_INFO']} params: #{params.inspect}"
+      #end
+
       before '/machines/logs/message' do
         rewrite_logs_v1
       end
@@ -28,6 +33,11 @@ class Travis::GuestApi::App::Middleware
       before '/machines/steps/:uuid', method: :put do
         rewrite_put_steps_v1
       end
+
+      before '/machines/steps/:uuid', method: :patch do
+        rewrite_put_steps_v1
+      end
+
 
       before '/machines/steps', method: :post do
         rewrite_post_steps_v1
@@ -106,6 +116,7 @@ class Travis::GuestApi::App::Middleware
 
     def rewrite_put_steps_v1
       env['PATH_INFO'] = "#{V2_PREFIX}/steps/#{params[:uuid]}"
+      env['REQUEST_METHOD'] = 'PUT'
       rewrite_job_id_v1
       request.delete_param(:stepStack)
     end
