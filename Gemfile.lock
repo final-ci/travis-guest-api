@@ -6,8 +6,8 @@ GIT
       metriks (>= 0.9.9.6)
 
 GIT
-  remote: git://github.com/finalci/travis-support.git
-  revision: 592ccf7dbb6cc631c200c64d3f682ed593fb2aa1
+  remote: git://github.com/final-ci/travis-support.git
+  revision: 19393c31c291b045a83ddb0a68818e68819ffc93
   specs:
     travis-support (0.0.1)
 
@@ -174,3 +174,6 @@ DEPENDENCIES
   travis-config (~> 0.1.0)
   travis-guest-api!
   travis-support!
+
+BUNDLED WITH
+   1.10.6
