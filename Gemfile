@@ -4,7 +4,7 @@ source "https://rubygems.org"
 gemspec
 
 #gem 'travis-support', github: 'travis-ci/travis-support'
-gem 'travis-support', github: 'finalci/travis-support'
+gem 'travis-support', github: 'final-ci/travis-support'
 #gem 'travis-support', path: '../travis-support'
 gem 'travis-config', '~> 0.1.0'
 gem 'sinatra'
