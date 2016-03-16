@@ -48,7 +48,7 @@ module Travis::GuestAPI
     end
 
     def get_result(job_id)
-      return 'started' unless @cache[job_id]
+      return 'errored' unless @cache[job_id]
       result = 'passed'
       @cache[job_id].each do |key, step_result|
         next if key == :last_time_used

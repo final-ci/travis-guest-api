@@ -89,8 +89,8 @@ describe Travis::GuestAPI::Cache do
   end
 
   describe "#get_result" do
-    it "returns 'started' when no result set" do
-      expect(cache.get_result(123456)).to eq 'started'
+    it "returns 'errored' when no result set" do
+      expect(cache.get_result(123456)).to eq 'errored'
     end
 
     it "reutrns passed when any test_step was set (event without result)" do

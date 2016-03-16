@@ -48,7 +48,6 @@ module Travis
       # logs super verbose, this can be turned on as needed
 
       def publisher_for(event)
-        event.to_s =~ /log/ ? @log_publisher : @state_publisher
         return @log_publisher if event.to_s =~ /log/
         return @test_result_publisher if event.to_s =~ /test_result/
         @state_publisher
