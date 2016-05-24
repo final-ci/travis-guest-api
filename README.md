@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/final-ci/travis-guest-api.svg?branch=master)](https://travis-ci.org/final-ci/travis-guest-api) [![Code Climate](https://codeclimate.com/github/final-ci/travis-guest-api/badges/gpa.svg)](https://codeclimate.com/github/final-ci/travis-guest-api) [![Test Coverage](https://codeclimate.com/github/final-ci/travis-guest-api/badges/coverage.svg)](https://codeclimate.com/github/final-ci/travis-guest-api/coverage)
+[![Build Status](https://travis-ci.org/AVGTechnologies/travis-guest-api.svg?branch=master)](https://travis-ci.org/AVGTechnologies/travis-guest-api) [![Code Climate](https://codeclimate.com/github/AVGTechnologies/travis-guest-api/badges/gpa.svg)](https://codeclimate.com/github/AVGTechnologies/travis-guest-api) [![Test Coverage](https://codeclimate.com/github/AVGTechnologies/travis-guest-api/badges/coverage.svg)](https://codeclimate.com/github/AVGTechnologies/travis-guest-api/coverage)
 
 Guest API
 =========
