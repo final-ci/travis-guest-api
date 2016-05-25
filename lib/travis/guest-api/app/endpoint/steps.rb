@@ -32,7 +32,8 @@ class Travis::GuestApi::App::Endpoint
           'class_position',
           'result',
           'duration',
-          'data'
+          'data',
+          'test_data'
         )
         res['number'] = 0
         res

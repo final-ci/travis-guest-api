@@ -54,6 +54,13 @@ module Travis::GuestApi
             e['job_id'] = job_id
             expect(arg[0]).to eq(e)
           }
+
+          response = post '/api/v2/steps', testcase.to_json, "CONTENT_TYPE" => "application/json"
+          expect(response.status).to eq(200)
+
+        end
+
+        it 'passes data with custom fiels test_data' do
           expect(reporter).to receive(:send_tresult) { |job_id, arg|
             e = testcase_with_data.dup
             e.delete 'job_id'
@@ -62,9 +69,6 @@ module Travis::GuestApi
             e['job_id'] = job_id
             expect(arg[0]).to eq(e)
           }
-
-          response = post '/api/v2/steps', testcase.to_json, "CONTENT_TYPE" => "application/json"
-          expect(response.status).to eq(200)
 
           response = post '/api/v2/steps', testcase_with_data.to_json, "CONTENT_TYPE" => "application/json"
           expect(response.status).to eq(200)

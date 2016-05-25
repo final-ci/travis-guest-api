@@ -40,9 +40,8 @@ module Travis::GuestApi
         # in case that stop is called immediately after start
         # e.g. server_thread should not be assigned yet
         sleep 1
-        server_thread[:server].stop(true) if server_thread[:server]
+        server_thread[:server].stop if server_thread[:server]
         sleep 1
-        Server.stop
       end
     end
 
