@@ -53,7 +53,7 @@ describe Travis::GuestAPI::Cache do
       it 'returns Nil' do
         job_id = 666
         cache.set job_id, test_uuid, foo: 'bar'
-        sleep 0.1
+        sleep 0.2
         expect(cache.get job_id, test_uuid).to be_nil
       end
     end
