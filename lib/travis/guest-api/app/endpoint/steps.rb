@@ -85,7 +85,6 @@ class Travis::GuestApi::App::Endpoint
       not_found_uids = []
       steps.each do |step|
         cached_step = Travis::GuestApi.cache.get(@job_id, step['uuid'])
-        Travis.logger.debug "Looking for #{@job_id.inspect},#{step['uuid'].inspect} and got: #{cached_step.inspect}"
         not_found_uids << step['uuid'] unless cached_step
         step['number'] ||= ((cached_step || {})['number'] || 0)
         step['number'] += 1
@@ -98,7 +97,9 @@ class Travis::GuestApi::App::Endpoint
       end
 
       steps.map! do |step|
-        Travis::GuestApi.cache.set(@job_id, step['uuid'], step)
+        result = Travis::GuestApi.cache.set(@job_id, step['uuid'], step)
+        Travis.logger.debug "Updated step #{@job_id.inspect},#{step['uuid'].inspect} to: #{step.inspect}"
+        result
       end
       @reporter.send_tresult_update(@job_id, steps)
       steps = steps.first if !(Array === env['rack.parser.result'])
