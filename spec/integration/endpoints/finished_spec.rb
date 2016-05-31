@@ -20,7 +20,8 @@ module Travis::GuestApi
         expect(callback).to receive(:call).with(
           job_id: 1,
           event: 'finished',
-          reporter: reporter
+          reporter: reporter,
+          result: nil
         )
 
         post '/api/v2/finished', {}.to_json, "CONTENT_TYPE" => "application/json"
