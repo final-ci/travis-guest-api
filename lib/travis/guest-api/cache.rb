@@ -6,10 +6,12 @@ module Travis::GuestAPI
   # they can be  provided in route GET steps/:uuid
   # for backward compatibility.
   class Cache
-    def initialize(max_job_time = 24.hours)
+    def initialize(max_job_time = 24.hours, config = {})
       @max_job_time = max_job_time
       @mutex = Mutex.new
-      @redis = Redis.new
+      puts config
+      puts '*'*10
+      @redis = Redis.new config || {}
     end
 
     def set(job_id, step_uuid, result)
@@ -46,8 +48,7 @@ module Travis::GuestAPI
     end
 
     def exists?(job_id)
-      job_record = get_job(job_id)
-      !job_record.nil?
+      @redis.exists(job_id)
     end
 
     def delete(job_id)

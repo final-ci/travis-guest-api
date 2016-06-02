@@ -7,7 +7,7 @@ require 'timeout'
 describe Travis::GuestAPI::Cache do
   let(:max_job_time) { 5.minutes }
   let(:gc_polling_interval) { 5.minutes }
-  let(:cache) { Travis::GuestAPI::Cache.new max_job_time }
+  let(:cache) { Travis::GuestAPI::Cache.new max_job_time, Travis.config.redis }
   let(:test_uuid) { 'ffdec891-ac4d-4187-a228-3edbe474c775' }
 
   after(:each) { cache.finalize }
@@ -30,6 +30,7 @@ describe Travis::GuestAPI::Cache do
     end
 
     it 'returns cached value' do
+      puts Travis.config.redis.url
       job_id = 42
       cache.set job_id, test_uuid, { 'test_data' => { 'v1' => 1 } }
       res = cache.set job_id, test_uuid, { 'test_data' => { 'v2' => 2 } }

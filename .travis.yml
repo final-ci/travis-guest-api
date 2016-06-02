@@ -11,3 +11,7 @@ rvm:
 
 services:
   - redis-server
+
+before_script:
+  - 'cp config/travis.example.yml config/travis.yml'
+
