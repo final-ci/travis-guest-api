@@ -8,6 +8,8 @@ production:
     username: cute.bunny
     password: t0p.s3kr3t
     vhost: travisci.production
+  redis:
+    url: redis://localhost:6379/0
   ssl:
     ca_file: /usr/lib/ssl/certs/ca-certificates.crt
   sentry:
@@ -21,6 +23,8 @@ development:
     username: travisci_worker
     password: travisci_worker_password
     vhost: travisci.development
+  redis:
+    url: redis://localhost:6379/9
 
 test:
   amqp:
@@ -29,4 +33,7 @@ test:
     username: travisci_worker
     password: travisci_worker_password
     vhost: travisci.development
-
+  redis:
+    url: redis://localhost:6379/13
+  cache:
+    expire_hours: 24

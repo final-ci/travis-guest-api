@@ -89,8 +89,8 @@ GEM
     pry-doc (0.6.0)
       pry (~> 0.9)
       yard (~> 0.8)
-    puma (3.1.0)
-    puma (3.1.0-java)
+    puma (3.0.0)
+    puma (3.0.0-java)
     rack (1.6.4)
     rack-contrib (1.4.0)
       git-version-bump (~> 0.15)
@@ -103,6 +103,7 @@ GEM
       rack (>= 1.0)
       rack-test (>= 0.5)
     rake (11.1.1)
+    redis (3.2.2)
     rspec (3.4.0)
       rspec-core (~> 3.4.0)
       rspec-expectations (~> 3.4.0)
@@ -164,10 +165,11 @@ DEPENDENCIES
   nokogiri
   pry
   pry-doc (~> 0.6.0)
-  puma
+  puma (= 3.0.0)
   rack-contrib
   rack-parser!
   racksh
+  redis (~> 3.2)
   rspec
   sinatra
   sinatra-contrib
@@ -176,4 +178,4 @@ DEPENDENCIES
   travis-support!
 
 BUNDLED WITH
-   1.11.2
+   1.12.4

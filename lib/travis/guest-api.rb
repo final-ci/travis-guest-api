@@ -9,7 +9,9 @@ module Travis
       end
 
       def cache
-        @cache ||= Travis::GuestAPI::Cache.new
+        expire = Travis.config.cache.expire_hours.to_i.hours
+        fail 'Please specify valid redis url' if Travis.config.redis.url.nil?
+        @cache ||= Travis::GuestAPI::Cache.new expire, Travis.config.redis
       end
     end
   end
